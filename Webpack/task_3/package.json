@@ -1,11 +1,11 @@
 {
-  "name": "task_2",
+  "name": "task_3",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start-dev": "webpack serve --open"
+    "start-dev": "webpack-dev-server --open"
   },
   "keywords": [],
   "author": "",
