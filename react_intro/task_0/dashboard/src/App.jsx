@@ -5,18 +5,18 @@ function App() {
 
   return (
     <>
-      <div className='App-header'>
-        <img className='holberton-logo' src={holbertonLogo} alt="holberton logo" />
-        <h1>School dashboard</h1>
-      </div>
+      <header className='App-header'>
+        <img className='holberton-logo' src={holbertonLogo} alt="Holberton logo" />
+        <h1>School Dashboard</h1>
+      </header>
 
-      <div className='App-body'>
+      <main className='App-body'>
         <p>Login to access the full dashboard</p>
-      </div>
+      </main>
 
-      <div className='App-footer'>
-        <p>Copyright 2025 - holberton School</p>
-      </div>
+      <footer className='App-footer'>
+        <p>Copyright {new Date().getFullYear()} - Holberton School</p>
+      </footer>
     </>
   )
 }
