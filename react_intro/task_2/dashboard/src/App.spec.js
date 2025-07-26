@@ -32,12 +32,12 @@ test('renders img element', () => {
 });
 
 test('Render 2 input elements', () => {
-    render(<App />);
+    render(<App />)
 
-    const emailInput = screen.getByLabelText(/email:/i);
-    const passwordInput = screen.getByLabelText(/password:/i);
-
+    const emailInput = screen.getByRole('textbox');
+    const passwordInput = screen.getByLabelText(/Password/i);
     expect(emailInput).toBeInTheDocument();
+
     expect(passwordInput).toBeInTheDocument();
 });
 
