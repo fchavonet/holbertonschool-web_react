@@ -34,8 +34,11 @@ test('renders img element', () => {
 test('Render 2 input elements', () => {
     render(<App />);
 
-    const allInputs = document.querySelectorAll('input');
-    expect(allInputs).toHaveLength(2);
+    const emailInput = screen.getByLabelText(/email:/i);
+    const passwordInput = screen.getByLabelText(/password:/i);
+
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
 });
 
 test('Render 2 label elements with the text "Email:" and "Password:"', () => {
