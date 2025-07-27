@@ -34,7 +34,7 @@ test('Logs message when close button is clicked', () => {
 
     fireEvent.click(closeButton);
 
-    expect(consoleLog).toHaveBeenCalledWith('Close button has been clicked');
+    expect(consoleLog).toHaveBeenCalledWith('close button has been clicked');
 
     consoleLog.mockRestore();
 
