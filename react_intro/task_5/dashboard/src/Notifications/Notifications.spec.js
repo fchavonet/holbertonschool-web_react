@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import Notifications from './Notifications';
+import Notifications from '../Notifications/Notifications';
 
 test('Renders the notifications title', () => {
     render(<Notifications />);
