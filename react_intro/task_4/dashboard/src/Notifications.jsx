@@ -4,7 +4,7 @@ import { getLatestNotification } from "./utils";
 
 function Notifications() {
     return (
-        <div className="notifications">
+        <div className="Notifications">
             <p>Here is the list of notifications</p>
 
             <button
@@ -19,13 +19,13 @@ function Notifications() {
                 aria-label="Close"
                 onClick={() => console.log('close button has been clicked')}
             >
-                <img src={closeButton} alt="Close Icon" style={{ width: '15px', height: '15px' }} />
+                <img src={closeButton} alt="close-icon" style={{ width: '15px', height: '15px' }} />
             </button>
 
             <ul>
                 <li data-priority="default" >New course available</li>
                 <li data-priority="urgent" >New resume available</li>
-                <li dangerouslySetInnerHTML={{ __html: getLatestNotification() }}></li>
+                <li data-priority="urgent" dangerouslySetInnerHTML={{ __html: getLatestNotification() }}></li>
             </ul>
         </div>
     )
