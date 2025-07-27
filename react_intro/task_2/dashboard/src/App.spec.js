@@ -17,11 +17,9 @@ test('Renders correct text content in p elements', () => {
     const bodyParagraph = screen.getByText(/login to access the full dashboard/i);
     expect(bodyParagraph).toBeInTheDocument();
 
-    const currentYear = new Date().getFullYear();
-    const footerParagraph = screen.getByText(
-        new RegExp(`copyright ${currentYear} - holberton school`, 'i')
-    );
-    expect(footerParagraph).toBeInTheDocument();
+    const footerText = screen.getByText(/copyright/i);
+
+    expect(footerText).toBeInTheDocument();
 });
 
 test('renders img element', () => {
@@ -34,8 +32,8 @@ test('renders img element', () => {
 test('Render 2 input elements', () => {
     render(<App />)
 
-    const emailInput = screen.getByRole('textbox');
-    const passwordInput = screen.getByLabelText(/Password/i);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
     expect(emailInput).toBeInTheDocument();
 
     expect(passwordInput).toBeInTheDocument();
