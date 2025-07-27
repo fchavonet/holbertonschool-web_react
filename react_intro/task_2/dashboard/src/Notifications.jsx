@@ -17,7 +17,7 @@ function Notifications() {
                     cursor: 'pointer'
                 }}
                 aria-label="Close"
-                onClick={() => console.log('Close button has been clicked')}
+                onClick={() => console.log('close button has been clicked')}
             >
                 <img src={closeButton} alt="close" style={{ width: '15px', height: '15px' }} />
             </button>
