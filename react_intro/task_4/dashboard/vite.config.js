@@ -5,8 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: './',
   plugins: [react()],
-  server: {
-    port: '3000',
-    host: '0.0.0.0',
+  webServer: {
+    command: 'npm run dev -- --host 0.0.0.0',
+    url: 'http://localhost:5173',
+    reuseExistingServer: false,
+    timeout: 120000,
   }
 })
