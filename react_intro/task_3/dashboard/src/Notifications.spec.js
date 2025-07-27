@@ -4,7 +4,7 @@ import Notifications from './Notifications';
 test('Renders the notifications title', () => {
     render(<Notifications />);
 
-    const titleElement = screen.getByText(/Here is the list of notifications/i);
+    const titleElement = screen.getByText(/here is the list of notifications/i);
 
     expect(titleElement).toBeInTheDocument();
 });
@@ -37,5 +37,5 @@ test('Logs message when close button is clicked', () => {
     expect(consoleLog).toHaveBeenCalledWith('Close button has been clicked');
 
     consoleLog.mockRestore();
-    
+
 });
