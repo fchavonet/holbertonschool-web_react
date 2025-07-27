@@ -1,0 +1,23 @@
+:root{
+    --primary-color: #e1003c;
+}
+
+.notifications {
+    margin: 1rem;
+    position: relative;
+    padding: 1rem;
+    border: 1px dashed var(--primary-color);
+}
+
+.notifications p {
+    margin-bottom: 1rem;
+}
+
+.notifications ul {
+    margin-left: 2rem;
+    color: var(--primary-color);
+}
+
+.notifications ul li[data-priority=default] {
+    color: blue;
+}
