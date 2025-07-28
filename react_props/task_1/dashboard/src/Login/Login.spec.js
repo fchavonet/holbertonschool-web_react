@@ -1,5 +1,6 @@
 import Login from './Login';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 test('Render 2 input elements', () => {
     render(<Login />)
@@ -19,6 +20,16 @@ test('Render 2 label elements with the text "Email:" and "Password:"', () => {
 
     expect(emailLabel).toBeInTheDocument();
     expect(passwordLabel).toBeInTheDocument();
+});
+
+test('focuses the input when the corresponding label is clicked', async () => {
+    render(<Login />);
+    const user = userEvent.setup();
+    const emailLabel = screen.getByText(/email:/i);
+    const emailInput = screen.getByLabelText(/email/i);
+
+    await user.click(emailLabel);
+    expect(emailInput).toHaveFocus();
 });
 
 test('Render a button with the text "OK"', () => {
