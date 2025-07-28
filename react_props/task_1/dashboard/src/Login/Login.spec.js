@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react';
 test('Render 2 input elements', () => {
     render(<Login />)
 
-    const emailInput = screen.getByRole('textbox');
-    const passwordInput = screen.getByLabelText(/Password/i);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
 
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
