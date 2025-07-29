@@ -19,12 +19,26 @@ function NotificationItem({ type = 'default', html, value }) {
         }
     }, [color]);
 
+    const containsHTML = (str) => {
+        return typeof str === 'string' && /<\/?[a-z][\s\S]*>/i.test(str);
+    };
+
     if (html) {
         return (
             <li
                 ref={liRef}
                 data-notification-type={type}
                 dangerouslySetInnerHTML={html}
+            />
+        );
+    }
+
+    if (value && containsHTML(value)) {
+        return (
+            <li
+                ref={liRef}
+                data-notification-type={type}
+                dangerouslySetInnerHTML={{ __html: value }}
             />
         );
     }
