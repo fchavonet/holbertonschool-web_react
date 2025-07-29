@@ -37,15 +37,20 @@ test('Renders with urgent type and red color', () => {
 });
 
 test('Renders with html content', () => {
-    const htmlContent = '<strong>Urgent requirement</strong> - complete by EOD';
+    const htmlContent = "<strong>Urgent requirement</strong> - complete by EOD";
+
     const { container } = render(
-        <NotificationItem type="urgent" html={htmlContent} />
+        <NotificationItem
+            type="urgent"
+            html={{ __html: htmlContent }}
+        />
     );
 
     const li = container.querySelector('li');
     expect(li).toHaveAttribute('data-notification-type', 'urgent');
     expect(li.innerHTML).toBe(htmlContent);
 });
+
 
 test('Renders with value content', () => {
     const { container } = render(
