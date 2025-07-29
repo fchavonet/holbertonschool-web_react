@@ -15,7 +15,7 @@ function Login() {
                 <input id='email' name='email' type='email' ref={emailRef} />
 
                 <label htmlFor='password' onClick={() => passwordRef.current && passwordRef.current.focus()}>Password:</label>
-                <input id='password' name='password' type='password' ref={passwordRef} />
+                <input id='password' name='password' type='password' role="textbox" ref={passwordRef} />
 
                 <button type='submit'>OK</button>
             </form>
