@@ -24,14 +24,24 @@ function Notifications({ notifications = [] }) {
                 </button>
 
                 <ul>
-                    {notifications.map((notification) => (
-                        <NotificationItem
-                            key={notification.id}
-                            type={notification.type}
-                            value={notification.value}
-                            html={notification.type === "urgent" && notification.id === 3 ? notification.value : null}
-                        />
-                    ))}
+                    {notifications.map((notification) => {
+                        if (notification.id === 3) {
+                            return (
+                                <NotificationItem
+                                    key={notification.id}
+                                    type={notification.type}
+                                    html={{ __html: notification.value }}
+                                />
+                            );
+                        }
+                        return (
+                            <NotificationItem
+                                key={notification.id}
+                                type={notification.type}
+                                value={notification.value}
+                            />
+                        );
+                    })}
                 </ul>
             </div>
         </div>

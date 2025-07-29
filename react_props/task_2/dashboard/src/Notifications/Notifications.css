@@ -14,10 +14,12 @@
     color: red;
 }
 
-.notifications ul li[data-notification-type=default] {
+.notifications ul li[data-notification-type="default"],
+li[data-notification-type="default"] {
     color: blue;
 }
 
-.notifications ul li[data-notification-type=urgent] {
+.notifications ul li[data-notification-type="urgent"],
+li[data-notification-type="urgent"] {
     color: red;
 }
