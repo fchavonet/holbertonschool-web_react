@@ -25,7 +25,6 @@ function Notifications({ notifications = [] }) {
 
                 <ul>
                     {notifications.map((notification) => {
-                        // Si la notification a une propriété html, l'utiliser
                         if (notification.html) {
                             return (
                                 <NotificationItem
@@ -35,7 +34,6 @@ function Notifications({ notifications = [] }) {
                                 />
                             );
                         }
-                        // Sinon, utiliser la valeur texte
                         return (
                             <NotificationItem
                                 key={notification.id}
