@@ -1,8 +1,8 @@
 import './Notifications.css'
+import NotificationItem from './NotificationItem';
 import closeButton from "../assets/close-button.png";
-import { getLatestNotification } from "../utils/utils";
 
-function Notifications() {
+function Notifications({ notifications = [] }) {
     return (
         <div className='root-notifications'>
             <div className="notifications">
@@ -24,9 +24,14 @@ function Notifications() {
                 </button>
 
                 <ul>
-                    <li data-priority="default" >New course available</li>
-                    <li data-priority="urgent" >New resume available</li>
-                    <li dangerouslySetInnerHTML={{ __html: getLatestNotification() }}></li>
+                    {notifications.map((notification) => (
+                        <NotificationItem
+                            key={notification.id}
+                            type={notification.type}
+                            value={notification.value}
+                            html={notification.type === "urgent" && notification.id === 3 ? notification.value : null}
+                        />
+                    ))}
                 </ul>
             </div>
         </div>

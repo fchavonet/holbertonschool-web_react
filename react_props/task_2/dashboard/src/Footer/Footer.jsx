@@ -3,9 +3,9 @@ import { getCurrentYear, getFooterCopy } from '../utils/utils'
 
 function Footer() {
     return (
-        <div className='App-footer'>
-            <p>Copyright {getCurrentYear()} - {getFooterCopy()}</p>
-        </div>
+        <footer className='App-footer'>
+            <p>Copyright {getCurrentYear()} {getFooterCopy()}</p>
+        </footer>
     )
 }
 

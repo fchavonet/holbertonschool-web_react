@@ -1,12 +1,8 @@
-:root{
-    --primary-color: #e1003c;
-}
-
 .notifications {
     margin: 1rem;
     position: relative;
     padding: 1rem;
-    border: 1px dashed var(--primary-color);
+    border: 1px dashed red;
 }
 
 .notifications p {
@@ -15,9 +11,13 @@
 
 .notifications ul {
     margin-left: 2rem;
-    color: var(--primary-color);
+    color: red;
 }
 
-.notifications ul li[data-priority=default] {
+.notifications ul li[data-notification-type=default] {
     color: blue;
+}
+
+.notifications ul li[data-notification-type=urgent] {
+    color: red;
 }

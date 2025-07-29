@@ -1,16 +1,12 @@
-import App from '../App/App';
 import { render, screen } from '@testing-library/react';
+import Footer from './Footer';
 
-test('Renders correct text content in p elements', () => {
-    render(<App />);
-
-    const bodyParagraph = screen.getByText(/login to access the full dashboard/i);
-    
-    expect(bodyParagraph).toBeInTheDocument();
+test('renders correct text content in p elements', () => {
+    render(<Footer />);
 
     const currentYear = new Date().getFullYear();
     const footerParagraph = screen.getByText(
-        new RegExp(`copyright ${currentYear} - holberton school`, 'i')
+        new RegExp(`copyright ${currentYear}.*holberton school`, 'i')
     );
 
     expect(footerParagraph).toBeInTheDocument();

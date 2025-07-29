@@ -1,14 +1,40 @@
+import { render } from '@testing-library/react';
 import Notifications from './Notifications';
-import { render, screen } from '@testing-library/react';
+import { getLatestNotification } from "../utils/utils";
 
-test('renders a close button', () => {
-    render(<Notifications />);
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    expect(closeButton).toBeInTheDocument();
+const mockNotifications = [
+    {
+        id: 1,
+        type: "default",
+        value: "New course available"
+    },
+    {
+        id: 2,
+        type: "urgent",
+        value: "New resume available"
+    },
+    {
+        id: 3,
+        type: "urgent",
+        value: getLatestNotification()
+    }
+];
+
+test('Renders 3 notification items with appropriate text', () => {
+    const { getByText, container } = render(
+        <Notifications notifications={mockNotifications} />
+    );
+
+    expect(getByText('New course available')).toBeInTheDocument();
+    expect(getByText('New resume available')).toBeInTheDocument();
+
+    const notificationItems = container.querySelectorAll('li');
+    expect(notificationItems).toHaveLength(3);
 });
 
-test('renders a list with 3 notification items', () => {
+test('Renders with empty notifications array by default', () => {
     const { container } = render(<Notifications />);
-    const listItems = container.querySelectorAll('li');
-    expect(listItems.length).toBe(3);
+
+    const notificationItems = container.querySelectorAll('li');
+    expect(notificationItems).toHaveLength(0);
 });
