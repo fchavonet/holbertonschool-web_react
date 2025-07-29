@@ -1,0 +1,27 @@
+.App-body {
+  padding: 2rem;
+  flex: 1;
+}
+
+.App-body p {
+  margin-bottom: 1rem;
+}
+
+form {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+}
+
+form input {
+  padding: 0 0.25rem;
+}
+
+form button {
+  padding: 0 0.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

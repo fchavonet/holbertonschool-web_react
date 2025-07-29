@@ -1,0 +1,22 @@
+.notifications {
+    margin: 1rem;
+    position: relative;
+    padding: 1rem;
+    border: 1px dashed red;
+}
+
+.notifications p {
+    margin-bottom: 1rem;
+}
+
+.notifications ul {
+    margin-left: 2rem;
+}
+
+.notifications ul li[data-notification-type="default"] {
+    color: blue;
+}
+
+.notifications ul li[data-notification-type="urgent"] {
+    color: red;
+}
