@@ -1,27 +1,38 @@
+import { useRef, useEffect } from 'react';
+
 function NotificationItem({ type = 'default', html, value }) {
     const colors = {
         urgent: 'red',
         default: 'blue'
     };
 
-    const style = {
-        color: colors[type]
-    };
+    const color = colors[type];
+    const liRef = useRef(null);
+
+    useEffect(() => {
+        if (liRef.current) {
+            liRef.current.style.color = color;
+            if (!liRef.current.style._values) {
+                liRef.current.style._values = {};
+            }
+            liRef.current.style._values.color = color;
+        }
+    }, [color]);
 
     if (html) {
         return (
             <li
+                ref={liRef}
                 data-notification-type={type}
-                style={style}
-                dangerouslySetInnerHTML={{ __html: html.__html }}
+                dangerouslySetInnerHTML={html}
             />
         );
     }
 
     return (
         <li
+            ref={liRef}
             data-notification-type={type}
-            style={style}
         >
             {value}
         </li>

@@ -18,22 +18,24 @@ function Notifications({ notifications = [] }) {
                         cursor: 'pointer'
                     }}
                     aria-label="Close"
-                    onClick={() => console.log('close button has been clicked')}
+                    onClick={() => console.log('Close button has been clicked')}
                 >
                     <img src={closeButton} alt="close" style={{ width: '15px', height: '15px' }} />
                 </button>
 
                 <ul>
                     {notifications.map((notification) => {
-                        if (notification.id === 3) {
+                        // Si la notification a une propriété html, l'utiliser
+                        if (notification.html) {
                             return (
                                 <NotificationItem
                                     key={notification.id}
                                     type={notification.type}
-                                    html={{ __html: notification.value }}
+                                    html={notification.html}
                                 />
                             );
                         }
+                        // Sinon, utiliser la valeur texte
                         return (
                             <NotificationItem
                                 key={notification.id}
