@@ -3,12 +3,42 @@ import './Notifications.css'
 import NotificationItem from './NotificationItem';
 import closeButton from "../assets/close-button.png";
 
-function Notifications({ notifications = [] }) {
-    return (
-        <div className='root-notifications'>
-            <div className="notifications">
-                <p>Here is the list of notifications</p>
+function Notifications({ notifications = [], displayDrawer = false }) {
+    let drawerContent = null;
 
+    if (displayDrawer) {
+        let content = "No new notification for now";
+
+        if (notifications.length > 0) {
+            const items = notifications.map(notification => {
+                if (notification.html) {
+                    return (
+                        <NotificationItem
+                            key={notification.id}
+                            type={notification.type}
+                            html={notification.html}
+                        />
+                    );
+                }
+                return (
+                    <NotificationItem
+                        key={notification.id}
+                        type={notification.type}
+                        value={notification.value}
+                    />
+                );
+            });
+
+            content = (
+                <>
+                    <p>Here is the list of notifications</p>
+                    <ul>{items}</ul>
+                </>
+            );
+        }
+
+        drawerContent = (
+            <div className="notifications">
                 <button
                     style={{
                         position: 'absolute',
@@ -21,32 +51,25 @@ function Notifications({ notifications = [] }) {
                     aria-label="Close"
                     onClick={() => console.log('Close button has been clicked')}
                 >
-                    <img src={closeButton} alt="close" style={{ width: '15px', height: '15px' }} />
+                    <img
+                        src={closeButton}
+                        alt="close"
+                        style={{ width: '15px', height: '15px' }}
+                    />
                 </button>
+                {content}
+            </div>
+        );
+    }
 
-                <ul>
-                    {notifications.map((notification) => {
-                        if (notification.html) {
-                            return (
-                                <NotificationItem
-                                    key={notification.id}
-                                    type={notification.type}
-                                    html={notification.html}
-                                />
-                            );
-                        }
-                        return (
-                            <NotificationItem
-                                key={notification.id}
-                                type={notification.type}
-                                value={notification.value}
-                            />
-                        );
-                    })}
-                </ul>
+    return (
+        <div className="root-notifications">
+            <div className="notification-container">
+                <div className="notifications-title">Your notifications</div>
+                {drawerContent}
             </div>
         </div>
     )
 }
 
-export default Notifications
+export default Notifications;
