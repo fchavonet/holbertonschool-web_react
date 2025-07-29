@@ -20,7 +20,8 @@ function CourseListRow({ isHeader = false, textFirstCell = "", textSecondCell = 
         if (textSecondCell === null) {
             return (
                 <tr>
-                    <td colSpan="2" style={{ textAlign: 'center' }}>{textFirstCell}</td>
+                    <td style={{ textAlign: 'center' }}>{textFirstCell}</td>
+                    <td style={{ border: 'none', width: '0%'} }></td>
                 </tr>
             );
         } else {
