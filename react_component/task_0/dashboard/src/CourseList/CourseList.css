@@ -1,0 +1,38 @@
+.CourseListContainer {
+    width: 100%;
+    height: 100%;
+    padding: 0 5rem;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#CourseList {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#CourseList th {
+    text-align: center;
+}
+
+#CourseList td {
+    text-align: left;
+}
+
+#CourseList th,
+#CourseList td {
+    padding: 0.20rem;
+    border: 1px solid black;
+}
+
+#CourseList th:first-child,
+#CourseList td:first-child {
+    width: 60%;
+}
+
+#CourseList th:last-child,
+#CourseList td:last-child {
+    width: 40%;
+}
