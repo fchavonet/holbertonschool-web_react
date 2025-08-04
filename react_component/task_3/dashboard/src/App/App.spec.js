@@ -34,7 +34,6 @@ test('Renders Footer component', () => {
     expect(footer).toBeInTheDocument();
 });
 
-
 test('Should render the Login component', () => {
     render(<App isLoggedIn={false} />);
 
@@ -53,6 +52,30 @@ test('Should render a CourseList component', () => {
 
     const loginText = screen.queryByText(/login to access the full dashboard/i);
     expect(loginText).not.toBeInTheDocument();
+});
+
+test('Displays Course list title when isLoggedIn is true', () => {
+    render(<App isLoggedIn={true} />);
+
+    const courseListTitle = screen.getByRole('heading', { name: /course list/i });
+    expect(courseListTitle).toBeInTheDocument();
+});
+
+test('Displays Log in to continue title when isLoggedIn is false', () => {
+    render(<App isLoggedIn={false} />);
+
+    const loginTitle = screen.getByRole('heading', { name: /log in to continue/i });
+    expect(loginTitle).toBeInTheDocument();
+});
+
+test('Displays News from the School section by default', () => {
+    render(<App />);
+
+    const newsTitle = screen.getByRole('heading', { name: /news from the school/i });
+    expect(newsTitle).toBeInTheDocument();
+
+    const newsParagraph = screen.getByText(/holberton school news goes here/i);
+    expect(newsParagraph).toBeInTheDocument();
 });
 
 let alertMock;
