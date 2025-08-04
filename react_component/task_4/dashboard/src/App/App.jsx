@@ -7,7 +7,11 @@ import Footer from '../Footer/Footer';
 import CourseList from '../CourseList/CourseList';
 import BodySection from '../BodySection/BodySection';
 import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
+import WithLogging from '../HOC/WithLogging';
 import { getLatestNotification } from "../utils/utils";
+
+const LoginWithLogging = WithLogging(Login);
+const CourseListWithLogging = WithLogging(CourseList);
 
 class App extends Component {
   static defaultProps = {
@@ -77,11 +81,11 @@ class App extends Component {
 
         {isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
-            <CourseList courses={coursesList} />
+            <CourseListWithLogging courses={coursesList} />
           </BodySectionWithMarginBottom>
         ) : (
           <BodySectionWithMarginBottom title="Log in to continue">
-            <Login />
+            <LoginWithLogging />
           </BodySectionWithMarginBottom>
         )}
 
