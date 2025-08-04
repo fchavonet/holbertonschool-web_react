@@ -4,6 +4,14 @@ import NotificationItem from './NotificationItem';
 import closeButton from "../assets/close-button.png";
 
 class Notifications extends Component {
+    shouldComponentUpdate(nextProps) {
+        // Ne re-render que si la longueur de la liste des notifications change
+        const currentLength = this.props.notifications ? this.props.notifications.length : 0;
+        const nextLength = nextProps.notifications ? nextProps.notifications.length : 0;
+
+        return currentLength !== nextLength;
+    }
+
     markAsRead = (id) => {
         console.log(`Notification ${id} has been marked as read`);
     }

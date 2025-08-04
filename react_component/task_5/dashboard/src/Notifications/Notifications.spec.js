@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Notifications from './Notifications';
 import { getLatestNotification } from "../utils/utils";
 
@@ -29,6 +30,7 @@ beforeEach(() => {
 
 afterEach(() => {
     consoleSpy.mockRestore();
+    cleanup();
 });
 
 test('Renders 3 notification items with appropriate text', () => {
@@ -133,4 +135,59 @@ test('Logs correct message when clicking on third notification item', () => {
     fireEvent.click(thirdNotification);
 
     expect(consoleSpy).toHaveBeenCalledWith('Notification 3 has been marked as read');
+});
+
+test('Does not re-render when notifications length remains the same', () => {
+    const renderSpy = jest.spyOn(Notifications.prototype, 'render');
+
+    const notifications1 = [
+        { id: 1, type: 'default', value: 'Notification 1' },
+        { id: 2, type: 'urgent', value: 'Notification 2' }
+    ];
+
+    const notifications2 = [
+        { id: 3, type: 'default', value: 'Different notification 1' },
+        { id: 4, type: 'urgent', value: 'Different notification 2' }
+    ];
+
+    const { rerender } = render(
+        <Notifications notifications={notifications1} displayDrawer={true} />
+    );
+
+    const initialRenderCount = renderSpy.mock.calls.length;
+
+    rerender(
+        <Notifications notifications={notifications2} displayDrawer={true} />
+    );
+
+    expect(renderSpy.mock.calls.length).toBe(initialRenderCount);
+
+    renderSpy.mockRestore();
+});
+
+test('Re-renders when notifications length changes', () => {
+    const renderSpy = jest.spyOn(Notifications.prototype, 'render');
+
+    const initialNotifications = [
+        { id: 1, type: 'default', value: 'Notification 1' },
+        { id: 2, type: 'urgent', value: 'Notification 2' }
+    ];
+
+    const newNotifications = [
+        { id: 1, type: 'default', value: 'Notification 1' }
+    ];
+
+    const { rerender } = render(
+        <Notifications notifications={initialNotifications} displayDrawer={true} />
+    );
+
+    const initialRenderCount = renderSpy.mock.calls.length;
+
+    rerender(
+        <Notifications notifications={newNotifications} displayDrawer={true} />
+    );
+
+    expect(renderSpy.mock.calls.length).toBe(initialRenderCount + 1);
+
+    renderSpy.mockRestore();
 });
