@@ -1,8 +1,17 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { StyleSheetTestUtils } from 'aphrodite';
 import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
 
 describe('BodySectionWithMarginBottom', () => {
+  beforeEach(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
+
+  afterEach(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
+
   test('renders BodySection component and passes props correctly', () => {
     const { getByText } = render(
       <BodySectionWithMarginBottom title="test title">
@@ -26,13 +35,13 @@ describe('BodySectionWithMarginBottom', () => {
     const outerDiv = container.firstChild;
     expect(outerDiv).toBeInTheDocument();
     expect(outerDiv.tagName).toBe('DIV');
-    
+
     const titleElement = container.querySelector('h1, h2, h3, h4, h5, h6');
     if (titleElement) {
       expect(titleElement).toBeInTheDocument();
       expect(titleElement).toHaveTextContent('test title');
     }
-    
+
     const paragraph = container.querySelector('p');
     expect(paragraph).toBeInTheDocument();
     expect(paragraph).toHaveTextContent('test children node');
