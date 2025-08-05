@@ -27,13 +27,16 @@ test('Renders any number of children passed to it', () => {
 });
 
 test('Renders with single child', () => {
-    const { getByText } = render(
-        <BodySection title='test'>
-            <p>test</p>
+    const { getByText, getByRole } = render(
+        <BodySection title='test title'>
+            <p>test content</p>
         </BodySection>
     );
 
-    expect(getByText('test')).toBeInTheDocument();
+    const heading = getByRole('heading', { level: 2 });
+    expect(heading).toHaveTextContent('test title');
+    
+    expect(getByText('test content')).toBeInTheDocument();
 });
 
 test('Renders with no children', () => {
