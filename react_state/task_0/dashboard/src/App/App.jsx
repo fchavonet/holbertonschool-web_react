@@ -61,6 +61,21 @@ class App extends Component {
     logOut: () => { }
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayDrawer: false
+    };
+  }
+
+  handleDisplayDrawer = () => {
+    this.setState({ displayDrawer: true });
+  };
+
+  handleHideDrawer = () => {
+    this.setState({ displayDrawer: false });
+  };
+
   handleKeyDown = (event) => {
     if (event.ctrlKey && event.key === 'h') {
       alert('Logging you out');
@@ -138,7 +153,12 @@ class App extends Component {
 
     return (
       <div className={css(styles.app)}>
-        <Notifications notifications={notificationsList} />
+        <Notifications
+          notifications={notificationsList}
+          displayDrawer={this.state.displayDrawer}
+          handleDisplayDrawer={this.handleDisplayDrawer}
+          handleHideDrawer={this.handleHideDrawer}
+        />
 
         <Header />
 

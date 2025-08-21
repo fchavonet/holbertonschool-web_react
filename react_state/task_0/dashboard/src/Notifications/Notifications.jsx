@@ -7,8 +7,13 @@ class Notifications extends Component {
     shouldComponentUpdate(nextProps) {
         const currentLength = this.props.notifications ? this.props.notifications.length : 0;
         const nextLength = nextProps.notifications ? nextProps.notifications.length : 0;
-
-        return currentLength !== nextLength;
+        if (currentLength !== nextLength) {
+            return true;
+        }
+        if (this.props.displayDrawer !== nextProps.displayDrawer) {
+            return true;
+        }
+        return false;
     }
 
     markAsRead = (id) => {
@@ -16,7 +21,6 @@ class Notifications extends Component {
     }
 
     render() {
-        // Animations CSS
         const opacityAnimation = {
             '0%': { opacity: 0.5 },
             '100%': { opacity: 1 }
@@ -54,7 +58,6 @@ class Notifications extends Component {
                     animationIterationCount: '3, 3'
                 }
             },
-            // Classe pour cacher le menu quand les notifications sont visibles
             notificationsTitleHidden: {
                 display: 'none'
             },
@@ -101,7 +104,7 @@ class Notifications extends Component {
             }
         });
 
-        const { notifications = [], displayDrawer = false } = this.props;
+        const { notifications = [], displayDrawer = false, handleDisplayDrawer = () => { }, handleHideDrawer = () => { } } = this.props;
         let drawerContent = null;
 
         if (displayDrawer) {
@@ -147,7 +150,7 @@ class Notifications extends Component {
                     <button
                         className={css(styles.closeButton)}
                         aria-label="Close"
-                        onClick={() => console.log('Close button has been clicked')}
+                        onClick={handleHideDrawer}
                     >
                         <img
                             src={closeButton}
@@ -163,10 +166,13 @@ class Notifications extends Component {
         return (
             <div className="root-notifications">
                 <div className={css(styles.notificationContainer)}>
-                    <div className={css(
-                        styles.notificationsTitle,
-                        displayDrawer && styles.notificationsTitleHidden
-                    )}>
+                    <div
+                        className={css(
+                            styles.notificationsTitle,
+                            displayDrawer && styles.notificationsTitleHidden
+                        )}
+                        onClick={handleDisplayDrawer}
+                    >
                         Your notifications
                     </div>
                     {drawerContent}
