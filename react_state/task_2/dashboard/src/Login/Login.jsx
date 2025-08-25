@@ -84,7 +84,7 @@ class Login extends Component {
     return (
       <div className={css(this.styles.AppBody)}>
         <p className={css(this.styles.AppBodyP)}>Login to access the full dashboard</p>
-        <form className={css(this.styles.form)} onSubmit={this.handleLoginSubmit}>
+        <form role="form" aria-label="login form" className={css(this.styles.form)} onSubmit={this.handleLoginSubmit}>
           <label
             htmlFor="email"
             onClick={() => this.emailRef.current && this.emailRef.current.focus()}
