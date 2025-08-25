@@ -13,7 +13,6 @@ class Login extends Component {
     this.state = {
       email: props.email || '',
       password: props.password || '',
-      enableSubmit: false,
     };
     this.emailRef = React.createRef();
     this.passwordRef = React.createRef();
@@ -55,24 +54,14 @@ class Login extends Component {
     return regex.test(value);
   };
 
-  updateEnableSubmit = () => {
-    const emailOk = this.state.email.length > 0 && this.validateEmail(this.state.email);
-    const passwordOk = this.state.password.length >= 8;
-    if (emailOk && passwordOk) {
-      this.setState({ enableSubmit: true });
-    } else {
-      this.setState({ enableSubmit: false });
-    }
-  };
-
   handleChangeEmail = (e) => {
     const value = e.target.value;
-    this.setState({ email: value }, this.updateEnableSubmit);
+    this.setState({ email: value });
   };
 
   handleChangePassword = (e) => {
     const value = e.target.value;
-    this.setState({ password: value }, this.updateEnableSubmit);
+    this.setState({ password: value });
   };
 
   handleLoginSubmit = (e) => {
@@ -83,6 +72,15 @@ class Login extends Component {
   };
 
   render() {
+    const emailOk =
+      this.state.email.length > 0 && this.validateEmail(this.state.email);
+    const passwordOk = this.state.password.length >= 8;
+
+    let isSubmitEnabled = false;
+    if (emailOk && passwordOk) {
+      isSubmitEnabled = true;
+    }
+
     return (
       <div className={css(this.styles.AppBody)}>
         <p className={css(this.styles.AppBodyP)}>Login to access the full dashboard</p>
@@ -122,7 +120,7 @@ class Login extends Component {
             type="submit"
             value="OK"
             className={css(this.styles.formButton)}
-            disabled={!this.state.enableSubmit}
+            disabled={!isSubmitEnabled}
           />
         </form>
       </div>
