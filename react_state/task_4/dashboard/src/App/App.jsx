@@ -57,11 +57,10 @@ const styles = StyleSheet.create({
   },
 });
 
-// Listes source (utilisées pour initialiser l'état)
 const notificationsList = [
   { id: 1, type: 'default', value: 'New course available' },
   { id: 2, type: 'urgent', value: 'New resume available' },
-  { id: 3, type: 'urgent', value: getLatestNotification() },
+  { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
 ];
 
 const coursesList = [
@@ -82,7 +81,6 @@ class App extends Component {
     this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
 
     this.state = {
-      // Contexte utilisateur
       user: { ...defaultUser },
       logOut: this.logOut,
       contextValue: {
@@ -90,16 +88,13 @@ class App extends Component {
         logOut: this.logOut,
       },
 
-      // Nouvel état demandé
       notifications: notificationsList,
       courses: coursesList,
 
-      // État existant
-      displayDrawer: false,
+      displayDrawer: true,
     };
   }
 
-  // Méthode de connexion : met à jour l’utilisateur et le contexte
   logIn(email, password) {
     const user = {
       email: email || '',
@@ -115,7 +110,6 @@ class App extends Component {
     });
   }
 
-  // Méthode de déconnexion : réinitialise l’utilisateur et le contexte
   logOut() {
     const user = { ...defaultUser };
     this.setState({
@@ -171,7 +165,6 @@ class App extends Component {
     document.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  // Nouvelle méthode demandée
   markNotificationAsRead(id) {
     console.log(`Notification ${id} has been marked as read`);
 
