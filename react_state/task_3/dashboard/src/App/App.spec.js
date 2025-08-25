@@ -67,6 +67,35 @@ describe('App Component Tests', () => {
     const loginTitle = screen.queryByRole('heading', { name: /log in to continue/i });
     expect(loginTitle).not.toBeInTheDocument();
   });
+
+  test('After login, the Header shows logoutSection with user email', async () => {
+    render(<App />);
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'strongpass');
+    await user.click(screen.getByRole('button', { name: /ok/i }));
+
+    const logoutLink = await screen.findByRole('link', { name: /logout/i });
+    expect(logoutLink).toBeInTheDocument();
+    expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+    expect(screen.getByText(/user@example.com/i)).toBeInTheDocument();
+  });
+
+  test('Clicking on Header logout link logs the user out and UI returns to Login', async () => {
+    render(<App />);
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'strongpass');
+    await user.click(screen.getByRole('button', { name: /ok/i }));
+
+    const logoutLink = await screen.findByRole('link', { name: /logout/i });
+    await user.click(logoutLink);
+
+    const loginTitle = await screen.findByRole('heading', { name: /log in to continue/i });
+    expect(loginTitle).toBeInTheDocument();
+  });
 });
 
 describe('App Keyboard Events Tests', () => {
