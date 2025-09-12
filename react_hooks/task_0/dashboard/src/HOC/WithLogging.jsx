@@ -4,12 +4,12 @@ const WithLogging = (WrappedComponent) => {
     class WithLoggingComponent extends Component {
         componentDidMount() {
             const componentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
-            console.log(`Component ${componentName} is mounted`);
+            // console.log(`Component ${componentName} is mounted`);
         }
 
         componentWillUnmount() {
             const componentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
-            console.log(`Component ${componentName} is going to unmount`);
+            // console.log(`Component ${componentName} is going to unmount`);
         }
 
         render() {

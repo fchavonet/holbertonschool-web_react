@@ -4,9 +4,11 @@ import { StyleSheet, css } from 'aphrodite';
 const styles = StyleSheet.create({
     default: {
         color: 'blue',
+        cursor: 'pointer',
     },
     urgent: {
         color: 'red',
+        cursor: 'pointer',
     }
 });
 

@@ -30,7 +30,7 @@ describe('BodySectionWithMarginBottom', () => {
       </BodySectionWithMarginBottom>
     );
 
-    console.log('HTML structure:', container.innerHTML);
+    // console.log('HTML structure:', container.innerHTML);
 
     const outerDiv = container.firstChild;
     expect(outerDiv).toBeInTheDocument();

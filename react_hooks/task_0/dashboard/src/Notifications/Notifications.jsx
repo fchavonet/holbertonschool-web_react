@@ -76,7 +76,7 @@ class Notifications extends PureComponent {
       },
       closeButton: {
         position: 'absolute',
-        top: '1rem',
+        top: '0.60rem',
         right: '1rem',
         background: 'transparent',
         border: 'none',

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import holbertonLogo from '../assets/holberton-logo.jpg';
 import { newContext } from '../Context/context';
@@ -38,8 +38,7 @@ const styles = StyleSheet.create({
 });
 
 function Header() {
-  // Utilisation du hook useContext pour consommer le contexte
-  const context = useContext(newContext);
+  const context = React.useContext(newContext);
   const { user, logOut } = context || {};
 
   const handleLogoutClick = (event) => {
@@ -59,10 +58,15 @@ function Header() {
           src={holbertonLogo}
           alt="holberton logo"
         />
-        <h1 className={css(styles.AppHeaderH1)}>School Dashboard</h1>
+
+        <h1
+          className={css(styles.AppHeaderH1)}
+          style={{ color: 'rgba(225, 0, 60, 1)' }}
+        >
+          School Dashboard
+        </h1>
       </div>
 
-      {/* Afficher la section uniquement si l'utilisateur est connecté */}
       {user && user.isLoggedIn && (
         <section id="logoutSection" className={css(styles.logoutSection)}>
           Welcome <b>{user.email}</b>
