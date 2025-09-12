@@ -101,24 +101,28 @@ class App extends Component {
       password: password || '',
       isLoggedIn: true,
     };
-    this.setState({
+    
+    // Utiliser un callback pour éviter les problèmes de timing
+    this.setState((prevState) => ({
       user,
       contextValue: {
         user,
         logOut: this.logOut,
       },
-    });
+    }));
   }
 
   logOut() {
     const user = { ...defaultUser };
-    this.setState({
+    
+    // Utiliser un callback pour éviter les problèmes de timing
+    this.setState((prevState) => ({
       user,
       contextValue: {
         user,
         logOut: this.logOut,
       },
-    });
+    }));
   }
 
   handleDisplayDrawer() {
@@ -168,17 +172,10 @@ class App extends Component {
   markNotificationAsRead(id) {
     console.log(`Notification ${id} has been marked as read`);
 
-    const current = this.state.notifications;
-    const filtered = [];
-
-    for (let i = 0; i < current.length; i += 1) {
-      const item = current[i];
-      if (item.id !== id) {
-        filtered.push(item);
-      }
-    }
-
-    this.setState({ notifications: filtered });
+    this.setState((prevState) => {
+      const filtered = prevState.notifications.filter(item => item.id !== id);
+      return { notifications: filtered };
+    });
   }
 
   render() {

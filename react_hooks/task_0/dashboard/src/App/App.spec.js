@@ -1,6 +1,6 @@
 import React from 'react';
 import App from './App.jsx';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StyleSheetTestUtils } from 'aphrodite';
 
@@ -91,7 +91,10 @@ describe('App Component Tests', () => {
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
     const logoutLink = await screen.findByRole('link', { name: /logout/i });
-    await user.click(logoutLink);
+    
+    await act(async () => {
+      await user.click(logoutLink);
+    });
 
     const loginTitle = await screen.findByRole('heading', { name: /log in to continue/i });
     expect(loginTitle).toBeInTheDocument();
@@ -110,7 +113,10 @@ describe('App Component Tests', () => {
     expect(listBefore.length).toBeGreaterThan(0);
 
     const firstItem = screen.getByText('New course available');
-    await user.click(firstItem);
+    
+    await act(async () => {
+      await user.click(firstItem);
+    });
 
     const removed = screen.queryByText('New course available');
     expect(removed).not.toBeInTheDocument();
@@ -125,7 +131,10 @@ describe('App Component Tests', () => {
     await user.click(menuItem);
 
     const secondItem = screen.getByText('New resume available');
-    await user.click(secondItem);
+    
+    await act(async () => {
+      await user.click(secondItem);
+    });
 
     expect(consoleSpy).toHaveBeenCalledWith('Notification 2 has been marked as read');
 
@@ -161,8 +170,10 @@ describe('App Keyboard Events Tests', () => {
     const courseListTitle = await screen.findByRole('heading', { name: /course list/i });
     expect(courseListTitle).toBeInTheDocument();
 
-    const keyboardEvent = new KeyboardEvent('keydown', { key: 'h', ctrlKey: true });
-    document.dispatchEvent(keyboardEvent);
+    await act(async () => {
+      const keyboardEvent = new KeyboardEvent('keydown', { key: 'h', ctrlKey: true });
+      document.dispatchEvent(keyboardEvent);
+    });
 
     expect(alertMock).toHaveBeenCalledWith('Logging you out');
 
