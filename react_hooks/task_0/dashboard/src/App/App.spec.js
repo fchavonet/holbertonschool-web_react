@@ -76,10 +76,11 @@ describe('App Component Tests', () => {
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    const logoutLink = await screen.findByRole('link', { name: /logout/i });
+    const logoutSection = screen.getByRole('banner');
+    const logoutLink = within(logoutSection).getByText('(logout)');
     expect(logoutLink).toBeInTheDocument();
-    expect(screen.getByText(/welcome/i)).toBeInTheDocument();
-    expect(screen.getByText(/user@example.com/i)).toBeInTheDocument();
+    expect(within(logoutSection).getByText(/welcome/i)).toBeInTheDocument();
+    expect(within(logoutSection).getByText(/user@example.com/i)).toBeInTheDocument();
   });
 
   test('Clicking on Header logout link logs the user out and UI returns to Login', async () => {
@@ -90,8 +91,8 @@ describe('App Component Tests', () => {
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    const logoutLink = await screen.findByRole('link', { name: /logout/i });
-    
+    const logoutLink = await screen.findByText('(logout)');  // ← CHANGEMENT ICI
+
     await act(async () => {
       await user.click(logoutLink);
     });
@@ -113,7 +114,7 @@ describe('App Component Tests', () => {
     expect(listBefore.length).toBeGreaterThan(0);
 
     const firstItem = screen.getByText('New course available');
-    
+
     await act(async () => {
       await user.click(firstItem);
     });
@@ -131,7 +132,7 @@ describe('App Component Tests', () => {
     await user.click(menuItem);
 
     const secondItem = screen.getByText('New resume available');
-    
+
     await act(async () => {
       await user.click(secondItem);
     });

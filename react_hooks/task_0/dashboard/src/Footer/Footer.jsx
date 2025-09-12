@@ -4,17 +4,25 @@ import { newContext } from '../Context/context';
 
 function Footer() {
   const context = useContext(newContext);
-  const user = context && context.user ? context.user : { isLoggedIn: false };
-
-  const shouldShowContact = user && user.isLoggedIn === true;
+  const { user, logOut } = context || {};
 
   return (
-    <footer className='App-footer'>
+    <footer className='App-footer' style={{ textAlign: 'center' }}>
       <p>Copyright {getCurrentYear()} {getFooterCopy()}</p>
-      {shouldShowContact && (
-        <p>
-          <a href="#" aria-label="Contact us link">Contact us</a>
-        </p>
+      {user && user.isLoggedIn && (
+        <div>
+          <p>Welcome {user.email}!</p>
+          <p>
+            <a href="#" onClick={(e) => { e.preventDefault(); logOut(); }} aria-label="Logout">
+              Logout
+            </a>
+          </p>
+          <p>
+            <a href="#" onClick={(e) => { e.preventDefault(); logOut(); }} aria-label="Contact us link">
+              Contact us
+            </a>
+          </p>
+        </div>
       )}
     </footer>
   );
