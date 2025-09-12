@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   },
   logoutSection: {
     marginTop: '0.75rem',
+    marginLeft: '2rem',
     fontFamily:
       "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
   },
