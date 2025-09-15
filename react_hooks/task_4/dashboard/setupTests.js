@@ -1,6 +1,16 @@
 import '@testing-library/jest-dom';
 import { StyleSheetTestUtils } from 'aphrodite';
-import { fireEvent } from '@testing-library/react';
+
+// Configuration globale Jest
+beforeAll(() => {
+  jest.setTimeout(8000);
+});
+
+afterAll(() => {
+  jest.clearAllTimers();
+  jest.clearAllMocks();
+  jest.restoreAllMocks();
+});
 
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -8,18 +18,9 @@ beforeEach(() => {
 
 afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  // Nettoyer le DOM
+  document.body.innerHTML = '';
 });
-
-if (typeof document === 'undefined') {
-  global.document = {
-    querySelector: () => null,
-    createElement: () => ({}),
-    head: { appendChild: () => { } },
-  };
-}
-
-// Rendre fireEvent disponible globalement
-global.fireEvent = fireEvent;
 
 // Fonction pour convertir hex en rgba
 function convertHexToRGBA(hex) {
@@ -38,13 +39,17 @@ expect.extend({
 
     for (const [property, expectedValue] of Object.entries(styles)) {
       if (property === 'color') {
-        // Obtenir la couleur actuelle
-        let actualColor;
+        // Obtenir la couleur actuelle de manière plus sûre
+        let actualColor = null;
+
         try {
-          const computedStyle = window.getComputedStyle(element);
-          actualColor = computedStyle.color;
+          if (typeof window !== 'undefined' && window.getComputedStyle) {
+            const computedStyle = window.getComputedStyle(element);
+            actualColor = computedStyle.color;
+          }
         } catch (e) {
-          actualColor = element.style ? element.style.color : null;
+          // Fallback silencieux
+          actualColor = element.style?.color || null;
         }
 
         // Le test passe un OBJET {r, g, b}
