@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
@@ -75,12 +75,15 @@ function App() {
   const [user, setUser] = useState({ ...defaultUser });
   const [notifications, setNotifications] = useState(notificationsList);
 
+  const handleDisplayDrawer = React.useCallback(() => { setDisplayDrawer(true); }, []);
+  const handleHideDrawer = React.useCallback(() => { setDisplayDrawer(false); }, []);
+
   // Memoized callback functions for reference stability
-  const logOut = useCallback(() => {
+  const logOut = React.useCallback(() => {
     setUser({ ...defaultUser });
   }, []);
 
-  const logIn = useCallback((email, password) => {
+  const logIn = React.useCallback((email, password) => {
     const newUser = {
       email: email || '',
       password: password || '',
@@ -89,15 +92,7 @@ function App() {
     setUser(newUser);
   }, []);
 
-  const handleDisplayDrawer = useCallback(() => {
-    setDisplayDrawer(true);
-  }, []);
-
-  const handleHideDrawer = useCallback(() => {
-    setDisplayDrawer(false);
-  }, []);
-
-  const markNotificationAsRead = useCallback((id) => {
+  const markNotificationAsRead = React.useCallback((id) => {
     console.log(`Notification ${id} has been marked as read`);
 
     setNotifications((prevNotifications) => 
@@ -106,7 +101,7 @@ function App() {
   }, []);
 
   // Handle keyboard events (Ctrl+H for logout)
-  const handleKeyDown = useCallback((event) => {
+  const handleKeyDown = React.useCallback((event) => {
     if (event.ctrlKey && event.key === 'h') {
       alert('Logging you out');
       logOut();
