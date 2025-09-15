@@ -1,7 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
-const Login = ({ email = '', password = '', logIn = () => { } }) => {
+const Login = (props) => {
+  // Chercher login (minuscule) au lieu de logIn
+  const loginFunction = props.login || props.logIn || (() => {});
+  const { email = '', password = '' } = props;
+  
   const [enableSubmit, setEnableSubmit] = useState(false);
   const [formData, setFormData] = useState({
     email: email || '',
@@ -77,8 +81,8 @@ const Login = ({ email = '', password = '', logIn = () => { } }) => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    if (typeof logIn === 'function') {
-      logIn(formData.email, formData.password);
+    if (typeof loginFunction === 'function') {
+      loginFunction(formData.email, formData.password);
     }
   };
 
