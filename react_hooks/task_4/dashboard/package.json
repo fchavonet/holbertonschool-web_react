@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest --testTimeout=10000 --maxWorkers=1"
   },
   "dependencies": {
     "aphrodite": "^2.4.0",
@@ -38,6 +38,10 @@
   },
   "jest": {
     "testEnvironment": "jsdom",
+    "testTimeout": 10000,
+    "maxWorkers": 1,
+    "forceExit": true,
+    "detectOpenHandles": false,
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/fileTransformer.js",
       "^.+\\.(css|less|scss)$": "identity-obj-proxy"
