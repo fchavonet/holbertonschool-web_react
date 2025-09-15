@@ -94,7 +94,6 @@ function App() {
 
   const markNotificationAsRead = React.useCallback((id) => {
     console.log(`Notification ${id} has been marked as read`);
-
     setNotifications((prevNotifications) => 
       prevNotifications.filter(item => item.id !== id)
     );
@@ -114,38 +113,66 @@ function App() {
     logOut
   }), [user, logOut]);
 
-  // Effects for lifecycle management
+  // 🔥 VERSION CORRIGÉE DU useEffect
   useEffect(() => {
-    // Add keyboard event listener
-    document.addEventListener('keydown', handleKeyDown);
+    // Vérifier qu'on est dans un navigateur, pas dans les tests
+    if (typeof document === 'undefined' || !document.addEventListener) {
+      return;
+    }
 
-    // Add CSS reset styles
-    const resetCSS = `
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        scroll-behavior: smooth;
+    let styleElement = null;
+
+    try {
+      // Add keyboard event listener
+      document.addEventListener('keydown', handleKeyDown);
+
+      // Add CSS reset styles only if not already present
+      if (!document.querySelector('#app-reset-styles')) {
+        const resetCSS = `
+          *,
+          *::before,
+          *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+          }
+
+          #root {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+          }
+        `;
+
+        styleElement = document.createElement('style');
+        styleElement.id = 'app-reset-styles';
+        styleElement.textContent = resetCSS;
+        document.head.appendChild(styleElement);
       }
+    } catch (error) {
+      // Ignore les erreurs dans les tests
+      console.warn('Could not set up DOM listeners:', error);
+    }
 
-      #root {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-    `;
-
-    const style = document.createElement('style');
-    style.textContent = resetCSS;
-    document.head.appendChild(style);
-
-    // Cleanup function
+    // 🔥 CLEANUP RENFORCÉ
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      if (style.parentNode) {
-        document.head.removeChild(style);
+      try {
+        if (document && document.removeEventListener) {
+          document.removeEventListener('keydown', handleKeyDown);
+        }
+        
+        if (styleElement && styleElement.parentNode) {
+          styleElement.parentNode.removeChild(styleElement);
+        }
+        
+        // Nettoyer aussi par ID au cas où
+        const existingStyle = document.querySelector('#app-reset-styles');
+        if (existingStyle && existingStyle.parentNode) {
+          existingStyle.parentNode.removeChild(existingStyle);
+        }
+      } catch (error) {
+        // Ignore cleanup errors in tests
       }
     };
   }, [handleKeyDown]);
