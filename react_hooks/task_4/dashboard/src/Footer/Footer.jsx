@@ -11,7 +11,6 @@ function Footer() {
       <p>Copyright {getCurrentYear()} - {getFooterCopy(true)}</p>
       {user && user.isLoggedIn && (
         <div>
-          <p>Welcome {user.email}!</p>
           <p>
             <a href="#" onClick={(e) => { e.preventDefault(); logOut(); }} aria-label="Logout">
               Logout

@@ -69,7 +69,7 @@ function Header() {
       </div>
 
       {user && user.isLoggedIn && (
-        <section id="logoutSection" className={css(styles.logoutSection)}>
+        <div id="logoutSection" className={css(styles.logoutSection)}>
           Welcome <b>{user.email}</b>
           <a
             href="#"
@@ -78,7 +78,7 @@ function Header() {
           >
             (logout)
           </a>
-        </section>
+        </div>
       )}
     </header>
   );

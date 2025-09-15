@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
@@ -99,7 +99,7 @@ function App() {
 
   const markNotificationAsRead = useCallback((id) => {
     console.log(`Notification ${id} has been marked as read`);
-    
+
     setNotifications((prevNotifications) => 
       prevNotifications.filter(item => item.id !== id)
     );
@@ -114,7 +114,7 @@ function App() {
   }, [logOut]);
 
   // Context value with memoization to prevent unnecessary re-renders
-  const contextValue = React.useMemo(() => ({
+  const contextValue = useMemo(() => ({
     user,
     logOut
   }), [user, logOut]);
@@ -149,7 +149,9 @@ function App() {
     // Cleanup function
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.head.removeChild(style);
+      if (style.parentNode) {
+        document.head.removeChild(style);
+      }
     };
   }, [handleKeyDown]);
 
