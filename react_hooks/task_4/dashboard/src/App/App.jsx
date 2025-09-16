@@ -107,7 +107,7 @@ function App() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('/notifications.json');
+        const response = await axios.get('http://localhost:5173/notifications.json');
 
         const rawData = response.data.notifications || response.data;
 
@@ -141,8 +141,12 @@ function App() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('/courses.json');
-        setCourses(response.data);
+        const response = await axios.get('http://localhost:5173/courses.json');
+
+        // Gérer les deux structures possibles : response.data ou response.data.courses
+        const coursesData = response.data.courses || response.data;
+
+        setCourses(coursesData);
       } catch (error) {
         console.error('Error fetching courses:', error);
       }
