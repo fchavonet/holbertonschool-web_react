@@ -108,15 +108,16 @@ function App() {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get('/notifications.json');
-        const notificationsData = response.data.map(notification => {
-          // Handle special case for latest notification
+
+        const rawData = response.data.notifications || response.data;
+
+        const notificationsData = rawData.map(notification => {
           if (notification.type === 'urgent' && !notification.value && !notification.html) {
             return {
               ...notification,
               html: { __html: getLatestNotification() }
             };
           }
-          // Handle the specific case where we need to inject the latest notification
           if (notification.id === 3) {
             return {
               ...notification,
@@ -125,6 +126,7 @@ function App() {
           }
           return notification;
         });
+
         setNotifications(notificationsData);
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -133,6 +135,7 @@ function App() {
 
     fetchNotifications();
   }, []);
+
 
   // Fetch courses data when user state changes
   useEffect(() => {
