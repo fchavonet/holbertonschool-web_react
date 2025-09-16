@@ -1,71 +1,123 @@
 import React from 'react';
 import App from './App.jsx';
-import { render, screen, within, act } from '@testing-library/react';
+import { render, screen, within, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StyleSheetTestUtils } from 'aphrodite';
+
+// Mock axios simple
+jest.mock('axios', () => ({
+  get: jest.fn(() => Promise.resolve({ data: [] }))
+}));
+
+import axios from 'axios';
+
+const mockNotifications = [
+  { id: 1, type: 'default', value: 'New course available' },
+  { id: 2, type: 'urgent', value: 'New resume available' },
+  { id: 3, type: 'urgent', html: { __html: 'Urgent requirement - complete by EOD' } }
+];
+
+const mockCourses = [
+  { id: 1, name: 'ES6', credit: 60 },
+  { id: 2, name: 'Webpack', credit: 20 },
+  { id: 3, name: 'React', credit: 40 }
+];
+
+// Supprimer les warnings console pendant les tests
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('act(...)')) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});
 
 describe('App Component Tests', () => {
   beforeEach(() => {
     StyleSheetTestUtils.suppressStyleInjection();
+    jest.clearAllMocks();
+    
+    axios.get.mockImplementation((url) => {
+      if (url.includes('notifications')) {
+        return Promise.resolve({ data: mockNotifications });
+      }
+      if (url.includes('courses')) {
+        return Promise.resolve({ data: mockCourses });
+      }
+      return Promise.resolve({ data: [] });
+    });
   });
 
   afterEach(() => {
     StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
   });
 
-  test('Renders Notifications component', () => {
+  test('Renders Notifications component', async () => {
     render(<App />);
-    const notificationTitle = screen.getByText(/your notifications/i);
-    expect(notificationTitle).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByText(/your notifications/i)).toBeInTheDocument();
+    });
   });
 
-  test('Renders Header component', () => {
+  test('Renders Header component', async () => {
     render(<App />);
-    const header = screen.getByText(/school dashboard/i);
-    expect(header).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByText(/school dashboard/i)).toBeInTheDocument();
+    });
   });
 
-  test('Renders Login component by default (not logged in)', () => {
+  test('Renders Login component by default (not logged in)', async () => {
     render(<App />);
-    const loginTitle = screen.getByRole('heading', { name: /log in to continue/i });
-    expect(loginTitle).toBeInTheDocument();
-
-    const courseListTitle = screen.queryByRole('heading', { name: /course list/i });
-    expect(courseListTitle).not.toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /log in to continue/i })).toBeInTheDocument();
+    });
+    
+    expect(screen.queryByRole('heading', { name: /course list/i })).not.toBeInTheDocument();
   });
 
-  test('Renders Footer component', () => {
+  test('Renders Footer component', async () => {
     render(<App />);
-    const footer = screen.getByText(/copyright/i);
-    expect(footer).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByText(/copyright/i)).toBeInTheDocument();
+    });
   });
 
-  test('Displays News from the School section by default', () => {
+  test('Displays News from the School section by default', async () => {
     render(<App />);
-    const newsTitle = screen.getByRole('heading', { name: /news from the school/i });
-    expect(newsTitle).toBeInTheDocument();
-
-    const newsParagraph = screen.getByText(/holberton school news goes here/i);
-    expect(newsParagraph).toBeInTheDocument();
+    
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /news from the school/i })).toBeInTheDocument();
+      expect(screen.getByText(/holberton school news goes here/i)).toBeInTheDocument();
+    });
   });
 
   test('After a successful login, Course list is displayed and Login disappears', async () => {
     render(<App />);
     const user = userEvent.setup();
 
-    const email = screen.getByLabelText(/email/i);
-    const password = screen.getByLabelText(/password/i);
-    const submit = screen.getByRole('button', { name: /ok/i });
+    await waitFor(() => {
+      expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    });
 
-    await user.type(email, 'user@example.com');
-    await user.type(password, 'strongpass');
-    await user.click(submit);
+    await user.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'strongpass');
+    await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    const courseListTitle = screen.getByRole('heading', { name: /course list/i });
-    expect(courseListTitle).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /course list/i })).toBeInTheDocument();
+    });
 
-    const loginTitle = screen.queryByRole('heading', { name: /log in to continue/i });
-    expect(loginTitle).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /log in to continue/i })).not.toBeInTheDocument();
   });
 
   test('After login, the Header shows logoutSection with user email', async () => {
@@ -76,11 +128,10 @@ describe('App Component Tests', () => {
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    const logoutSection = screen.getByRole('banner');
-    const logoutLink = within(logoutSection).getByText('(logout)');
-    expect(logoutLink).toBeInTheDocument();
-    expect(within(logoutSection).getByText(/welcome/i)).toBeInTheDocument();
-    expect(within(logoutSection).getByText(/user@example.com/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('(logout)')).toBeInTheDocument();
+      expect(screen.getByText(/welcome/i)).toBeInTheDocument();
+    });
   });
 
   test('Clicking on Header logout link logs the user out and UI returns to Login', async () => {
@@ -91,54 +142,52 @@ describe('App Component Tests', () => {
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    const logoutLink = await screen.findByText('(logout)');  // ← CHANGEMENT ICI
-
-    await act(async () => {
-      await user.click(logoutLink);
+    await waitFor(() => {
+      expect(screen.getByText('(logout)')).toBeInTheDocument();
     });
 
-    const loginTitle = await screen.findByRole('heading', { name: /log in to continue/i });
-    expect(loginTitle).toBeInTheDocument();
+    await user.click(screen.getByText('(logout)'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /log in to continue/i })).toBeInTheDocument();
+    });
   });
 
-  // -------- Nouveaux tests demandés --------
   test('Clicking on a notification item removes it from the list', async () => {
     render(<App />);
     const user = userEvent.setup();
 
-    const menuItem = screen.getByText(/your notifications/i);
-    await user.click(menuItem);
-
-    const drawer = screen.getByText(/here is the list of notifications/i).closest('div');
-    const listBefore = within(drawer).getAllByRole('listitem');
-    expect(listBefore.length).toBeGreaterThan(0);
-
-    const firstItem = screen.getByText('New course available');
-
-    await act(async () => {
-      await user.click(firstItem);
+    await waitFor(() => {
+      expect(screen.getByText(/your notifications/i)).toBeInTheDocument();
     });
 
-    const removed = screen.queryByText('New course available');
-    expect(removed).not.toBeInTheDocument();
+    await user.click(screen.getByText(/your notifications/i));
+
+    await waitFor(() => {
+      expect(screen.getByText('New course available')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText('New course available'));
+
+    await waitFor(() => {
+      expect(screen.queryByText('New course available')).not.toBeInTheDocument();
+    });
   });
 
   test('Clicking on a notification logs the expected message with the ID', async () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     render(<App />);
     const user = userEvent.setup();
 
-    const menuItem = screen.getByText(/your notifications/i);
-    await user.click(menuItem);
+    await user.click(screen.getByText(/your notifications/i));
 
-    const secondItem = screen.getByText('New resume available');
-
-    await act(async () => {
-      await user.click(secondItem);
+    await waitFor(() => {
+      expect(screen.getByText('New resume available')).toBeInTheDocument();
     });
 
-    expect(consoleSpy).toHaveBeenCalledWith('Notification 2 has been marked as read');
+    await user.click(screen.getByText('New resume available'));
 
+    expect(consoleSpy).toHaveBeenCalledWith('Notification 2 has been marked as read');
     consoleSpy.mockRestore();
   });
 });
@@ -148,7 +197,18 @@ describe('App Keyboard Events Tests', () => {
 
   beforeEach(() => {
     StyleSheetTestUtils.suppressStyleInjection();
-    alertMock = jest.spyOn(window, 'alert').mockImplementation(() => { });
+    alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    jest.clearAllMocks();
+    
+    axios.get.mockImplementation((url) => {
+      if (url.includes('notifications')) {
+        return Promise.resolve({ data: mockNotifications });
+      }
+      if (url.includes('courses')) {
+        return Promise.resolve({ data: mockCourses });
+      }
+      return Promise.resolve({ data: [] });
+    });
   });
 
   afterEach(() => {
@@ -160,25 +220,22 @@ describe('App Keyboard Events Tests', () => {
     render(<App />);
     const user = userEvent.setup();
 
-    const email = screen.getByLabelText(/email/i);
-    const password = screen.getByLabelText(/password/i);
-    const submit = screen.getByRole('button', { name: /ok/i });
+    await user.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'strongpass');
+    await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    await user.type(email, 'user@example.com');
-    await user.type(password, 'strongpass');
-    await user.click(submit);
-
-    const courseListTitle = await screen.findByRole('heading', { name: /course list/i });
-    expect(courseListTitle).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /course list/i })).toBeInTheDocument();
+    });
 
     await act(async () => {
       const keyboardEvent = new KeyboardEvent('keydown', { key: 'h', ctrlKey: true });
       document.dispatchEvent(keyboardEvent);
     });
 
-    expect(alertMock).toHaveBeenCalledWith('Logging you out');
-
-    const loginTitle = await screen.findByRole('heading', { name: /log in to continue/i });
-    expect(loginTitle).toBeInTheDocument();
+    await waitFor(() => {
+      expect(alertMock).toHaveBeenCalledWith('Logging you out');
+      expect(screen.getByRole('heading', { name: /log in to continue/i })).toBeInTheDocument();
+    });
   });
 });

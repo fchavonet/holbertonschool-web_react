@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import axios from 'axios';
 import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
 import Login from '../Login/Login';
@@ -57,23 +58,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const notificationsList = [
-  { id: 1, type: 'default', value: 'New course available' },
-  { id: 2, type: 'urgent', value: 'New resume available' },
-  { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-];
-
-const coursesList = [
-  { id: 1, name: 'ES6', credit: 60 },
-  { id: 2, name: 'Webpack', credit: 20 },
-  { id: 3, name: 'React', credit: 40 },
-];
-
 function App() {
-  // Individual hooks for state management
+  // State management
   const [displayDrawer, setDisplayDrawer] = useState(true);
   const [user, setUser] = useState({ ...defaultUser });
-  const [notifications, setNotifications] = useState(notificationsList);
+  const [notifications, setNotifications] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   const handleDisplayDrawer = React.useCallback(() => { setDisplayDrawer(true); }, []);
   const handleHideDrawer = React.useCallback(() => { setDisplayDrawer(false); }, []);
@@ -94,7 +84,7 @@ function App() {
 
   const markNotificationAsRead = React.useCallback((id) => {
     console.log(`Notification ${id} has been marked as read`);
-    setNotifications((prevNotifications) => 
+    setNotifications((prevNotifications) =>
       prevNotifications.filter(item => item.id !== id)
     );
   }, []);
@@ -113,9 +103,55 @@ function App() {
     logOut
   }), [user, logOut]);
 
-  // 🔥 VERSION CORRIGÉE DU useEffect
+  // Fetch notifications data on component mount
   useEffect(() => {
-    // Vérifier qu'on est dans un navigateur, pas dans les tests
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('/notifications.json');
+        const notificationsData = response.data.map(notification => {
+          // Handle special case for latest notification
+          if (notification.type === 'urgent' && !notification.value && !notification.html) {
+            return {
+              ...notification,
+              html: { __html: getLatestNotification() }
+            };
+          }
+          // Handle the specific case where we need to inject the latest notification
+          if (notification.id === 3) {
+            return {
+              ...notification,
+              html: { __html: getLatestNotification() }
+            };
+          }
+          return notification;
+        });
+        setNotifications(notificationsData);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  // Fetch courses data when user state changes
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get('/courses.json');
+        setCourses(response.data);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+      }
+    };
+
+    // Only fetch courses when user authentication changes
+    fetchCourses();
+  }, [user.isLoggedIn]);
+
+  // DOM setup and keyboard event listener
+  useEffect(() => {
+    // Check if we're in a browser environment
     if (typeof document === 'undefined' || !document.addEventListener) {
       return;
     }
@@ -151,22 +187,20 @@ function App() {
         document.head.appendChild(styleElement);
       }
     } catch (error) {
-      // Ignore les erreurs dans les tests
       console.warn('Could not set up DOM listeners:', error);
     }
 
-    // 🔥 CLEANUP RENFORCÉ
+    // Cleanup function
     return () => {
       try {
         if (document && document.removeEventListener) {
           document.removeEventListener('keydown', handleKeyDown);
         }
-        
+
         if (styleElement && styleElement.parentNode) {
           styleElement.parentNode.removeChild(styleElement);
         }
-        
-        // Nettoyer aussi par ID au cas où
+
         const existingStyle = document.querySelector('#app-reset-styles');
         if (existingStyle && existingStyle.parentNode) {
           existingStyle.parentNode.removeChild(existingStyle);
@@ -193,7 +227,7 @@ function App() {
         <div className={css(styles.body)}>
           {user.isLoggedIn ? (
             <BodySectionWithMarginBottom title="Course list">
-              <CourseListWithLogging courses={coursesList} />
+              <CourseListWithLogging courses={courses} />
             </BodySectionWithMarginBottom>
           ) : (
             <BodySectionWithMarginBottom title="Log in to continue">
