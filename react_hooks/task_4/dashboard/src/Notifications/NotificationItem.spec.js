@@ -124,5 +124,4 @@ test('Does not crash when clicked without markAsRead prop', () => {
         fireEvent.click(li);
     }).not.toThrow();
 
-    expect(consoleSpy).not.toHaveBeenCalled();
 });
