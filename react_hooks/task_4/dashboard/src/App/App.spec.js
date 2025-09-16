@@ -4,7 +4,6 @@ import { render, screen, within, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StyleSheetTestUtils } from 'aphrodite';
 
-// Mock axios simple
 jest.mock('axios', () => ({
   get: jest.fn(() => Promise.resolve({ data: [] }))
 }));
@@ -23,7 +22,6 @@ const mockCourses = [
   { id: 3, name: 'React', credit: 40 }
 ];
 
-// Supprimer les warnings console pendant les tests
 const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {
