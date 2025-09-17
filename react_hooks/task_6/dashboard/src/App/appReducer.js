@@ -26,6 +26,7 @@ export function appReducer(state = initialState, action) {
       return {
         ...state,
         user: { email: '', password: '', isLoggedIn: false },
+        courses: [],
       };
     case APP_ACTIONS.TOGGLE_DRAWER:
       return { ...state, displayDrawer: !state.displayDrawer };
