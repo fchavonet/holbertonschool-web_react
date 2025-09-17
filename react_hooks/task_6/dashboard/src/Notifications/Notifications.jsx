@@ -6,9 +6,9 @@ import closeButton from "../assets/close-button.png";
 const Notifications = memo(({
   notifications = [],
   displayDrawer = false,
-  handleDisplayDrawer = () => {},
-  handleHideDrawer = () => {},
-  markNotificationAsRead = () => {}
+  handleDisplayDrawer = () => { },
+  handleHideDrawer = () => { },
+  markNotificationAsRead = () => { }
 }) => {
   const opacityAnimation = {
     '0%': { opacity: 0.5 },
@@ -96,7 +96,7 @@ const Notifications = memo(({
   let drawerContent = null;
 
   if (displayDrawer) {
-    let content = "No new notification for now";
+    let content;
 
     if (notifications.length > 0) {
       const items = [];
@@ -134,10 +134,16 @@ const Notifications = memo(({
           <ul className={css(styles.notificationsUl)}>{items}</ul>
         </>
       );
+    } else {
+      content = (
+        <div className="Notifications">
+          No new notifications for now
+        </div>
+      );
     }
 
     drawerContent = (
-      <div className={css(styles.notifications)}>
+      <div className={`Notifications ${css(styles.notifications)}`}>
         <button
           className={css(styles.closeButton)}
           aria-label="Close"
