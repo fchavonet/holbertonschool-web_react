@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { StyleSheetTestUtils } from 'aphrodite';
 import Footer from './Footer';
-import { newContext, defaultUser } from '../Context/context';
 
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -12,8 +11,8 @@ afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-test('renders correct text content in p elements', () => {
-  render(<Footer />);
+test('renders correct copyright text', () => {
+  render(<Footer user={{ isLoggedIn: false }} />);
 
   const currentYear = new Date().getFullYear();
   const footerParagraph = screen.getByText(
@@ -24,29 +23,15 @@ test('renders correct text content in p elements', () => {
 });
 
 test('does NOT display "Contact us" link when user is logged out', () => {
-  const value = { user: { ...defaultUser }, logOut: () => { } };
-
-  render(
-    <newContext.Provider value={value}>
-      <Footer />
-    </newContext.Provider>
-  );
+  render(<Footer user={{ isLoggedIn: false }} />);
 
   const contactLink = screen.queryByRole('link', { name: /contact us/i });
   expect(contactLink).not.toBeInTheDocument();
 });
 
 test('displays "Contact us" link when user is logged in', () => {
-  const value = {
-    user: { email: 'user@example.com', password: 'strongpass', isLoggedIn: true },
-    logOut: () => { },
-  };
-
-  render(
-    <newContext.Provider value={value}>
-      <Footer />
-    </newContext.Provider>
-  );
+  const user = { email: 'user@example.com', isLoggedIn: true };
+  render(<Footer user={user} />);
 
   const contactLink = screen.getByRole('link', { name: /contact us/i });
   expect(contactLink).toBeInTheDocument();

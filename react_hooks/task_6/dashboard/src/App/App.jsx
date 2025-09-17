@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import axios from 'axios';
 import Notifications from '../Notifications/Notifications';
@@ -10,252 +10,112 @@ import BodySection from '../BodySection/BodySection';
 import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
 import WithLogging from '../HOC/WithLogging';
 import { getLatestNotification } from '../utils/utils';
-import { newContext, defaultUser } from '../Context/context';
+import { APP_ACTIONS, appReducer, initialState } from './appReducer';
 
 const LoginWithLogging = WithLogging(Login);
 const CourseListWithLogging = WithLogging(CourseList);
 
 const styles = StyleSheet.create({
-  reset: {
-    '*': {
-      boxSizing: 'border-box',
-      margin: 0,
-      padding: 0,
-      scrollBehavior: 'smooth',
-    },
-    '*::before': {
-      boxSizing: 'border-box',
-      margin: 0,
-      padding: 0,
-    },
-    '*::after': {
-      boxSizing: 'border-box',
-      margin: 0,
-      padding: 0,
-    },
-  },
-  app: {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  body: {
-    flex: 1,
-    padding: '20px',
-  },
-  footer: {
-    padding: '1rem',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontFamily:
-      "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-    fontSize: '0.8rem',
-    fontWeight: 200,
-    fontStyle: 'italic',
-    borderTop: '0.25rem solid #e1003c',
-  },
+  app: { minHeight: '100vh', display: 'flex', flexDirection: 'column' },
+  body: { flex: 1, padding: '20px' },
+  footer: { padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '0.8rem', fontWeight: 200, fontStyle: 'italic', borderTop: '0.25rem solid #e1003c' },
 });
 
 function App() {
-  // State management
-  const [displayDrawer, setDisplayDrawer] = useState(true);
-  const [user, setUser] = useState({ ...defaultUser });
-  const [notifications, setNotifications] = useState([]);
-  const [courses, setCourses] = useState([]);
+  const [state, dispatch] = useReducer(appReducer, initialState);
 
-  const handleDisplayDrawer = React.useCallback(() => { setDisplayDrawer(true); }, []);
-  const handleHideDrawer = React.useCallback(() => { setDisplayDrawer(false); }, []);
+  const handleDisplayDrawer = useCallback(() => dispatch({ type: APP_ACTIONS.TOGGLE_DRAWER }), []);
+  const handleHideDrawer = useCallback(() => dispatch({ type: APP_ACTIONS.TOGGLE_DRAWER }), []);
 
-  // Memoized callback functions for reference stability
-  const logOut = React.useCallback(() => {
-    setUser({ ...defaultUser });
+  const logIn = useCallback((email, password) => {
+    dispatch({ type: APP_ACTIONS.LOGIN, payload: { email, password } });
   }, []);
 
-  const logIn = React.useCallback((email, password) => {
-    const newUser = {
-      email: email || '',
-      password: password || '',
-      isLoggedIn: true,
-    };
-    setUser(newUser);
+  const logOut = useCallback(() => {
+    dispatch({ type: APP_ACTIONS.LOGOUT });
   }, []);
 
-  const markNotificationAsRead = React.useCallback((id) => {
-    console.log(`Notification ${id} has been marked as read`);
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter(item => item.id !== id)
-    );
+  const markNotificationAsRead = useCallback((id) => {
+    dispatch({ type: APP_ACTIONS.MARK_NOTIFICATION_READ, payload: id });
   }, []);
 
-  // Handle keyboard events (Ctrl+H for logout)
-  const handleKeyDown = React.useCallback((event) => {
+  const handleKeyDown = useCallback((event) => {
     if (event.ctrlKey && event.key === 'h') {
       alert('Logging you out');
       logOut();
     }
   }, [logOut]);
 
-  // Context value with memoization to prevent unnecessary re-renders
-  const contextValue = useMemo(() => ({
-    user,
-    logOut
-  }), [user, logOut]);
-
-  // Fetch notifications data on component mount
+  // Fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/notifications.json');
-
-        const rawData = response.data.notifications || response.data;
-
-        const notificationsData = rawData.map(notification => {
-          if (notification.type === 'urgent' && !notification.value && !notification.html) {
-            return {
-              ...notification,
-              html: { __html: getLatestNotification() }
-            };
+        const res = await axios.get('http://localhost:3000/notifications.json');
+        const notificationsData = (res.data.notifications || res.data).map((notif) => {
+          if ((!notif.value && !notif.html) || notif.id === 3) {
+            return { ...notif, html: { __html: getLatestNotification() } };
           }
-          if (notification.id === 3) {
-            return {
-              ...notification,
-              html: { __html: getLatestNotification() }
-            };
-          }
-          return notification;
+          return notif;
         });
-
-        setNotifications(notificationsData);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+        dispatch({ type: APP_ACTIONS.SET_NOTIFICATIONS, payload: notificationsData });
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
       }
     };
-
     fetchNotifications();
   }, []);
 
-
-  // Fetch courses data when user state changes
+  // Fetch courses
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/courses.json');
-
-        // Gérer les deux structures possibles : response.data ou response.data.courses
-        const coursesData = response.data.courses || response.data;
-
-        setCourses(coursesData);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
+        const res = await axios.get('http://localhost:3000/courses.json');
+        const coursesData = res.data.courses || res.data;
+        dispatch({ type: APP_ACTIONS.SET_COURSES, payload: coursesData });
+      } catch (err) {
+        console.error('Error fetching courses:', err);
       }
     };
+    if (state.user.isLoggedIn) fetchCourses();
+  }, [state.user.isLoggedIn]);
 
-    // Only fetch courses when user authentication changes
-    fetchCourses();
-  }, [user.isLoggedIn]);
-
-  // DOM setup and keyboard event listener
   useEffect(() => {
-    // Check if we're in a browser environment
-    if (typeof document === 'undefined' || !document.addEventListener) {
-      return;
-    }
-
-    let styleElement = null;
-
-    try {
-      // Add keyboard event listener
-      document.addEventListener('keydown', handleKeyDown);
-
-      // Add CSS reset styles only if not already present
-      if (!document.querySelector('#app-reset-styles')) {
-        const resetCSS = `
-          *,
-          *::before,
-          *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            scroll-behavior: smooth;
-          }
-
-          #root {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-          }
-        `;
-
-        styleElement = document.createElement('style');
-        styleElement.id = 'app-reset-styles';
-        styleElement.textContent = resetCSS;
-        document.head.appendChild(styleElement);
-      }
-    } catch (error) {
-      console.warn('Could not set up DOM listeners:', error);
-    }
-
-    // Cleanup function
-    return () => {
-      try {
-        if (document && document.removeEventListener) {
-          document.removeEventListener('keydown', handleKeyDown);
-        }
-
-        if (styleElement && styleElement.parentNode) {
-          styleElement.parentNode.removeChild(styleElement);
-        }
-
-        const existingStyle = document.querySelector('#app-reset-styles');
-        if (existingStyle && existingStyle.parentNode) {
-          existingStyle.parentNode.removeChild(existingStyle);
-        }
-      } catch (error) {
-        // Ignore cleanup errors in tests
-      }
-    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
   return (
-    <newContext.Provider value={contextValue}>
-      <div className={css(styles.app)}>
-        <Notifications
-          notifications={notifications}
-          displayDrawer={displayDrawer}
-          handleDisplayDrawer={handleDisplayDrawer}
-          handleHideDrawer={handleHideDrawer}
-          markNotificationAsRead={markNotificationAsRead}
-        />
+    <div className={css(styles.app)}>
+      <Notifications
+        notifications={state.notifications}
+        displayDrawer={state.displayDrawer}
+        handleDisplayDrawer={handleDisplayDrawer}
+        handleHideDrawer={handleHideDrawer}
+        markNotificationAsRead={markNotificationAsRead}
+      />
 
-        <Header />
+      <Header user={state.user} logOut={logOut} />
 
-        <div className={css(styles.body)}>
-          {user.isLoggedIn ? (
-            <BodySectionWithMarginBottom title="Course list">
-              <CourseListWithLogging courses={courses} />
-            </BodySectionWithMarginBottom>
-          ) : (
-            <BodySectionWithMarginBottom title="Log in to continue">
-              <LoginWithLogging
-                logIn={logIn}
-                email={user.email}
-                password={user.password}
-              />
-            </BodySectionWithMarginBottom>
-          )}
+      <div className={css(styles.body)}>
+        {state.user.isLoggedIn ? (
+          <BodySectionWithMarginBottom title="Course list">
+            <CourseListWithLogging courses={state.courses} />
+          </BodySectionWithMarginBottom>
+        ) : (
+          <BodySectionWithMarginBottom title="Log in to continue">
+            <LoginWithLogging logIn={logIn} email={state.user.email} password={state.user.password} />
+          </BodySectionWithMarginBottom>
+        )}
 
-          <BodySection title="News from the School">
-            <p>Holberton School News goes here</p>
-          </BodySection>
-        </div>
-
-        <div className={css(styles.footer)}>
-          <Footer />
-        </div>
+        <BodySection title="News from the School">
+          <p>Holberton School News goes here</p>
+        </BodySection>
       </div>
-    </newContext.Provider>
+
+      <div className={css(styles.footer)}>
+        <Footer user={state.user} logOut={logOut} />
+      </div>
+    </div>
   );
 }
 
