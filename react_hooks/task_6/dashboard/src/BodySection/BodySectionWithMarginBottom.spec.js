@@ -1,29 +1,37 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+// External libraries.
+import { render, screen } from '@testing-library/react';
 import { StyleSheetTestUtils } from 'aphrodite';
+
+// Component.
 import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
 
-describe('BodySectionWithMarginBottom', () => {
-  beforeEach(() => {
-    StyleSheetTestUtils.suppressStyleInjection();
-  });
+// Suppress Aphrodite style injection before tests.
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-  afterEach(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
+// Clear and resume style injection after tests.
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-  test('renders BodySection component and passes props correctly', () => {
-    const { getByText } = render(
+/******************
+* COMPONENT TESTS *
+******************/
+
+describe('BodySectionWithMarginBottom Component Tests', () => {
+  test('Renders BodySection component and passes props correctly', () => {
+    render(
       <BodySectionWithMarginBottom title="test title">
         <p>test children node</p>
       </BodySectionWithMarginBottom>
     );
 
-    expect(getByText('test title')).toBeInTheDocument();
-    expect(getByText('test children node')).toBeInTheDocument();
+    expect(screen.getByText('test title')).toBeInTheDocument();
+    expect(screen.getByText('test children node')).toBeInTheDocument();
   });
 
-  test('renders with the correct structure', () => {
+  test('Renders with the correct structure', () => {
     const { container } = render(
       <BodySectionWithMarginBottom title="test title">
         <p>test children node</p>
@@ -31,6 +39,7 @@ describe('BodySectionWithMarginBottom', () => {
     );
 
     const outerDiv = container.firstChild;
+
     expect(outerDiv).toBeInTheDocument();
     expect(outerDiv.tagName).toBe('DIV');
 
@@ -41,11 +50,12 @@ describe('BodySectionWithMarginBottom', () => {
     }
 
     const paragraph = container.querySelector('p');
+
     expect(paragraph).toBeInTheDocument();
     expect(paragraph).toHaveTextContent('test children node');
   });
 
-  test('applies margin bottom styling', () => {
+  test('Applies margin bottom styling', () => {
     const { container } = render(
       <BodySectionWithMarginBottom title="test title">
         <p>test children node</p>
@@ -53,6 +63,7 @@ describe('BodySectionWithMarginBottom', () => {
     );
 
     const outerDiv = container.firstChild;
+
     expect(outerDiv).toHaveAttribute('class');
     expect(outerDiv.className).not.toBe('');
   });

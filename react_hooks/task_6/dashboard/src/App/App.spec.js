@@ -6,7 +6,7 @@ import axios from 'axios';
 // Styles.
 import { StyleSheetTestUtils } from 'aphrodite';
 
-// Components / App.
+// Components.
 import App from './App.jsx';
 
 // Mocks axios.
