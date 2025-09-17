@@ -5,7 +5,7 @@ function BodySectionWithMarginBottom({ title, children }) {
   const styles = StyleSheet.create({
     bodySectionWithMargin: {
       // Adds spacing below the section.
-      marginBottom: '3rem'
+      marginBottom: '2rem'
     }
   });
 
