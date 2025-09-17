@@ -14,19 +14,19 @@ describe('Header component', () => {
   });
 
   test('renders img element', () => {
-    render(<Header user={{ isLoggedIn: false }} logOut={() => {}} />);
+    render(<Header user={{ isLoggedIn: false }} logOut={() => { }} />);
     const imgElement = screen.getByAltText(/holberton logo/i);
     expect(imgElement).toBeInTheDocument();
   });
 
   test('renders h1 element with "School Dashboard" text', () => {
-    render(<Header user={{ isLoggedIn: false }} logOut={() => {}} />);
+    render(<Header user={{ isLoggedIn: false }} logOut={() => { }} />);
     const headingElement = screen.getByRole('heading', { name: /school dashboard/i });
     expect(headingElement).toBeInTheDocument();
   });
 
   test('logout section is NOT rendered when user is not logged in', () => {
-    render(<Header user={{ isLoggedIn: false }} logOut={() => {}} />);
+    render(<Header user={{ isLoggedIn: false }} logOut={() => { }} />);
     expect(screen.queryByText(/welcome/i)).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /logout/i })).not.toBeInTheDocument();
   });

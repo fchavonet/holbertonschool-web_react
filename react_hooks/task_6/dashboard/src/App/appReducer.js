@@ -1,4 +1,3 @@
-// App/appReducer.js
 export const APP_ACTIONS = {
   LOGIN: 'LOGIN',
   LOGOUT: 'LOGOUT',

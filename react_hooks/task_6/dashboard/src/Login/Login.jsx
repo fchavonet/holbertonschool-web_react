@@ -3,7 +3,7 @@ import { StyleSheet, css } from 'aphrodite';
 import useLogin from '../hooks/useLogin';
 
 const Login = (props) => {
-  const loginFunction = props.login || props.logIn || (() => {});
+  const loginFunction = props.login || props.logIn || (() => { });
 
   const {
     email,

@@ -46,7 +46,6 @@ function App() {
     }
   }, [logOut]);
 
-  // Fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -65,7 +64,6 @@ function App() {
     fetchNotifications();
   }, []);
 
-  // Fetch courses
   useEffect(() => {
     const fetchCourses = async () => {
       try {
