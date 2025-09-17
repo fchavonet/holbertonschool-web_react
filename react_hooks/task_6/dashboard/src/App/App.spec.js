@@ -1,44 +1,53 @@
-import React from 'react';
-import App from './App.jsx';
+// External libraries.
 import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { StyleSheetTestUtils } from 'aphrodite';
 import axios from 'axios';
 
+// Styles.
+import { StyleSheetTestUtils } from 'aphrodite';
+
+// Components / App.
+import App from './App.jsx';
+
+// Mocks axios.
 jest.mock('axios');
 
+// Mock data.
 const mockNotifications = [
   { id: 1, type: 'default', value: 'New course available' },
   { id: 2, type: 'urgent', value: 'New resume available' },
-  { id: 3, type: 'urgent', html: { __html: 'Urgent requirement - complete by EOD' } }
+  { id: 3, type: 'urgent', html: { __html: 'Urgent requirement - complete by EOD' } },
 ];
 
 const mockCourses = [
   { id: 1, name: 'ES6', credit: 60 },
   { id: 2, name: 'Webpack', credit: 20 },
-  { id: 3, name: 'React', credit: 40 }
+  { id: 3, name: 'React', credit: 40 },
 ];
 
+// Suppress Aphrodite style injection before tests.
 beforeAll(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
+// Clear and resume style injection after tests.
 afterAll(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
+// Reset mocks before each test.
 beforeEach(() => {
   jest.clearAllMocks();
   axios.get.mockImplementation((url) => {
-    if (url.includes('notifications')) {
-      return Promise.resolve({ data: mockNotifications });
-    }
-    if (url.includes('courses')) {
-      return Promise.resolve({ data: mockCourses });
-    }
+    if (url.includes('notifications')) return Promise.resolve({ data: mockNotifications });
+    if (url.includes('courses')) return Promise.resolve({ data: mockCourses });
     return Promise.resolve({ data: [] });
   });
 });
+
+/******************
+* COMPONENT TESTS *
+******************/
 
 describe('App Component Tests', () => {
   test('Renders all main components', async () => {
@@ -60,19 +69,15 @@ describe('App Component Tests', () => {
     render(<App />);
     const user = userEvent.setup();
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json');
-    });
+    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
 
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/courses.json');
-    });
-
+    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/courses.json'));
     await waitFor(() => screen.getByRole('heading', { name: /course list/i }));
+
     expect(screen.queryByRole('heading', { name: /log in to continue/i })).not.toBeInTheDocument();
   });
 
@@ -80,16 +85,13 @@ describe('App Component Tests', () => {
     render(<App />);
     const user = userEvent.setup();
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json');
-    });
+    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
 
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
     await waitFor(() => screen.getByText('(logout)'));
-
     await user.click(screen.getByText('(logout)'));
 
     await waitFor(() => screen.getByRole('heading', { name: /log in to continue/i }));
@@ -98,10 +100,7 @@ describe('App Component Tests', () => {
   test('Notifications are loaded from API', async () => {
     render(<App />);
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json');
-    });
-
+    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
     expect(screen.getByText(/your notifications/i)).toBeInTheDocument();
   });
 
@@ -112,9 +111,9 @@ describe('App Component Tests', () => {
           data: {
             notifications: [
               { id: 1, type: 'default', value: 'New course available' },
-              { id: 2, type: 'urgent', value: 'New resume available' }
-            ]
-          }
+              { id: 2, type: 'urgent', value: 'New resume available' },
+            ],
+          },
         });
       }
       return Promise.resolve({ data: [] });
@@ -122,17 +121,17 @@ describe('App Component Tests', () => {
 
     render(<App />);
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json');
-    });
+    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 100)));
 
     expect(screen.getByText(/your notifications/i)).toBeInTheDocument();
   });
 });
+
+/***********************
+* KEYBOARD EVENT TESTS *
+***********************/
 
 describe('Keyboard events', () => {
   test('Ctrl+H logs out user', async () => {
@@ -140,9 +139,7 @@ describe('Keyboard events', () => {
     const user = userEvent.setup();
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => { });
 
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json');
-    });
+    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
 
     await user.type(screen.getByLabelText(/email/i), 'user@example.com');
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
@@ -155,13 +152,8 @@ describe('Keyboard events', () => {
       document.dispatchEvent(event);
     });
 
-    await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith('Logging you out');
-    });
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /log in to continue/i })).toBeInTheDocument();
-    });
+    await waitFor(() => expect(alertMock).toHaveBeenCalledWith('Logging you out'));
+    await waitFor(() => screen.getByRole('heading', { name: /log in to continue/i }));
 
     alertMock.mockRestore();
   });

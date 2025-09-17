@@ -1,107 +1,160 @@
+// External libraries.
 import React, { useReducer, useEffect, useCallback } from 'react';
-import { StyleSheet, css } from 'aphrodite';
 import axios from 'axios';
-import Notifications from '../Notifications/Notifications';
-import Header from '../Header/Header';
-import Login from '../Login/Login';
-import Footer from '../Footer/Footer';
-import CourseList from '../CourseList/CourseList';
-import BodySection from '../BodySection/BodySection';
-import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
-import WithLogging from '../HOC/WithLogging';
+import { StyleSheet, css } from 'aphrodite';
+
+// Utilities.
 import { getLatestNotification } from '../utils/utils';
+
+// Reducer / State.
 import { APP_ACTIONS, appReducer, initialState } from './appReducer';
 
-const LoginWithLogging = WithLogging(Login);
-const CourseListWithLogging = WithLogging(CourseList);
+// Components.
+import BodySection from '../BodySection/BodySection';
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
+import CourseList from '../CourseList/CourseList';
+import Footer from '../Footer/Footer';
+import Header from '../Header/Header';
+import Login from '../Login/Login';
+import Notifications from '../Notifications/Notifications';
+import WithLogging from '../HOC/WithLogging';
 
+// HOCs with logging.
+const LoginWithLoggingHOC = WithLogging(Login);
+const CourseListWithLoggingHOC = WithLogging(CourseList);
+
+// Styles.
 const styles = StyleSheet.create({
-  app: { minHeight: '100vh', display: 'flex', flexDirection: 'column' },
-  body: { flex: 1, padding: '20px' },
-  footer: { padding: '1rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', fontSize: '0.8rem', fontWeight: 200, fontStyle: 'italic', borderTop: '0.25rem solid #e1003c' },
+  reset: {
+    '*': {
+      boxSizing: 'border-box',
+      margin: 0,
+      padding: 0,
+      scrollBehavior: 'smooth',
+    },
+    '*::before': {
+      boxSizing: 'border-box',
+      margin: 0,
+      padding: 0,
+    },
+    '*::after': {
+      boxSizing: 'border-box',
+      margin: 0,
+      padding: 0,
+    },
+  },
+  appContainer: {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  mainBody: {
+    flex: 1,
+    padding: '1rem'
+  },
+  footerContainer: {
+    padding: '1rem',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '0.8rem',
+    fontWeight: 200,
+    fontStyle: 'italic',
+    borderTop: '0.25rem solid #e1003c'
+  },
 });
 
 function App() {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  const handleDisplayDrawer = useCallback(() => dispatch({ type: APP_ACTIONS.TOGGLE_DRAWER }), []);
-  const handleHideDrawer = useCallback(() => dispatch({ type: APP_ACTIONS.TOGGLE_DRAWER }), []);
+  // Notifications drawer.
+  const toggleNotificationsDrawer = useCallback(() => dispatch({ type: APP_ACTIONS.TOGGLE_DRAWER }), []);
 
-  const logIn = useCallback((email, password) => {
+  // User authentication.
+  const handleLogin = useCallback((email, password) => {
     dispatch({ type: APP_ACTIONS.LOGIN, payload: { email, password } });
   }, []);
 
-  const logOut = useCallback(() => {
-    dispatch({ type: APP_ACTIONS.LOGOUT });
-  }, []);
+  const handleLogout = useCallback(() => dispatch({ type: APP_ACTIONS.LOGOUT }), []);
 
-  const markNotificationAsRead = useCallback((id) => {
+  // Notifications.
+  const markNotificationReadById = useCallback((id) => {
     dispatch({ type: APP_ACTIONS.MARK_NOTIFICATION_READ, payload: id });
   }, []);
 
-  const handleKeyDown = useCallback((event) => {
+  // Keyboard shortcut (Ctrl + h).
+  const handleCtrlHKey = useCallback((event) => {
     if (event.ctrlKey && event.key === 'h') {
       alert('Logging you out');
-      logOut();
+      handleLogout();
     }
-  }, [logOut]);
+  }, [handleLogout]);
 
+  // Fetch notifications.
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const res = await axios.get('http://localhost:3000/notifications.json');
-        const notificationsData = (res.data.notifications || res.data).map((notif) => {
+        const notificationsList = (res.data.notifications || res.data).map((notif) => {
           if ((!notif.value && !notif.html) || notif.id === 3) {
             return { ...notif, html: { __html: getLatestNotification() } };
           }
+
           return notif;
         });
-        dispatch({ type: APP_ACTIONS.SET_NOTIFICATIONS, payload: notificationsData });
+        dispatch({ type: APP_ACTIONS.SET_NOTIFICATIONS, payload: notificationsList });
       } catch (err) {
         console.error('Error fetching notifications:', err);
       }
     };
+
     fetchNotifications();
   }, []);
 
+  // Fetch courses if logged in.
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await axios.get('http://localhost:3000/courses.json');
-        const coursesData = res.data.courses || res.data;
-        dispatch({ type: APP_ACTIONS.SET_COURSES, payload: coursesData });
+        const coursesList = res.data.courses || res.data;
+
+        dispatch({ type: APP_ACTIONS.SET_COURSES, payload: coursesList });
       } catch (err) {
         console.error('Error fetching courses:', err);
       }
     };
+
     if (state.user.isLoggedIn) fetchCourses();
   }, [state.user.isLoggedIn]);
 
+  // Keyboard event listener.
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+    document.addEventListener('keydown', handleCtrlHKey);
+
+    return () => document.removeEventListener('keydown', handleCtrlHKey);
+  }, [handleCtrlHKey]);
 
   return (
-    <div className={css(styles.app)}>
+    <div className={css(styles.appContainer)}>
       <Notifications
         notifications={state.notifications}
         displayDrawer={state.displayDrawer}
-        handleDisplayDrawer={handleDisplayDrawer}
-        handleHideDrawer={handleHideDrawer}
-        markNotificationAsRead={markNotificationAsRead}
+        handleDisplayDrawer={toggleNotificationsDrawer}
+        handleHideDrawer={toggleNotificationsDrawer}
+        markNotificationAsRead={markNotificationReadById}
       />
 
-      <Header user={state.user} logOut={logOut} />
+      <Header user={state.user} logOut={handleLogout} />
 
-      <div className={css(styles.body)}>
+      <div className={css(styles.mainBody)}>
         {state.user.isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
-            <CourseListWithLogging courses={state.courses} />
+            <CourseListWithLoggingHOC courses={state.courses} />
           </BodySectionWithMarginBottom>
         ) : (
           <BodySectionWithMarginBottom title="Log in to continue">
-            <LoginWithLogging logIn={logIn} email={state.user.email} password={state.user.password} />
+            <LoginWithLoggingHOC logIn={handleLogin} email={state.user.email} password={state.user.password} />
           </BodySectionWithMarginBottom>
         )}
 
@@ -110,8 +163,8 @@ function App() {
         </BodySection>
       </div>
 
-      <div className={css(styles.footer)}>
-        <Footer user={state.user} logOut={logOut} />
+      <div className={css(styles.footerContainer)}>
+        <Footer user={state.user} logOut={handleLogout} />
       </div>
     </div>
   );
