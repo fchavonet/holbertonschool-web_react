@@ -4,7 +4,13 @@ import { getCurrentYear, getFooterCopy } from '../../utils/utils';
 function Footer({ user, logOut }) {
   return (
     <footer className='App-footer' style={{ textAlign: 'center' }}>
-      <p>Copyright {getCurrentYear()} - {getFooterCopy(true)}</p>
+      {user.isLoggedIn && (
+        <a href="#" aria-label="Contact us link">
+          contact us
+        </a>
+      )}
+
+      <p style={{ marginTop: '0.5rem' }}>Copyright {getCurrentYear()} - {getFooterCopy(true)}</p>
     </footer>
   );
 }
