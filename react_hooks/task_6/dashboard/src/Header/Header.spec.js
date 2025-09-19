@@ -1,37 +1,50 @@
-import React from 'react';
-import Header from './Header';
+// External libraries.
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+// Styles.
 import { StyleSheetTestUtils } from 'aphrodite';
 
-describe('Header component', () => {
-  beforeEach(() => {
-    StyleSheetTestUtils.suppressStyleInjection();
-  });
+// Components.
+import Header from './Header';
 
-  afterEach(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
+// Suppress Aphrodite style injection before tests.
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-  test('renders img element', () => {
+// Clear and resume style injection after tests.
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
+/******************
+* COMPONENT TESTS *
+******************/
+
+describe('Header Component Tests', () => {
+  test('Renders logo image', () => {
     render(<Header user={{ isLoggedIn: false }} logOut={() => { }} />);
+    
     const imgElement = screen.getByAltText(/holberton logo/i);
     expect(imgElement).toBeInTheDocument();
   });
 
-  test('renders h1 element with "School Dashboard" text', () => {
+  test('Renders main heading with "School Dashboard" text', () => {
     render(<Header user={{ isLoggedIn: false }} logOut={() => { }} />);
+    
     const headingElement = screen.getByRole('heading', { name: /school dashboard/i });
     expect(headingElement).toBeInTheDocument();
   });
 
-  test('logout section is NOT rendered when user is not logged in', () => {
+  test('Logout section is hidden when user is not logged in', () => {
     render(<Header user={{ isLoggedIn: false }} logOut={() => { }} />);
+    
     expect(screen.queryByText(/welcome/i)).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /logout/i })).not.toBeInTheDocument();
   });
 
-  test('logout section IS rendered when user is logged in', () => {
+  test('Logout section is displayed when user is logged in', () => {
     const logOutSpy = jest.fn();
     const user = { email: 'user@example.com', isLoggedIn: true };
 
@@ -42,7 +55,7 @@ describe('Header component', () => {
     expect(screen.getByRole('link', { name: /logout/i })).toBeInTheDocument();
   });
 
-  test('clicking on the "logout" link calls the logOut function', async () => {
+  test('Clicking logout link triggers logOut function', async () => {
     const userUi = userEvent.setup();
     const logOutSpy = jest.fn();
     const user = { email: 'user@example.com', isLoggedIn: true };
@@ -51,6 +64,7 @@ describe('Header component', () => {
 
     const logoutLink = screen.getByRole('link', { name: /logout/i });
     await userUi.click(logoutLink);
+    
     expect(logOutSpy).toHaveBeenCalled();
   });
 });

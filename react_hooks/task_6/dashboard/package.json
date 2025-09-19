@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest --testTimeout=10000 --maxWorkers=1 --detectOpenHandles"
+    "test": "jest --detectOpenHandles --maxWorkers=1 --testTimeout=10000"
   },
   "dependencies": {
     "aphrodite": "^2.4.0",
