@@ -1,10 +1,15 @@
+// External libraries.
 import React, { useRef } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+
+// Custom hooks.
 import useLogin from '../hooks/useLogin';
 
 const Login = (props) => {
+  // Extract login function from props with fallback.
   const loginFunction = props.login || props.logIn || (() => { });
 
+  // Use custom login hook for form state management.
   const {
     email,
     password,
@@ -14,9 +19,11 @@ const Login = (props) => {
     handleLoginSubmit,
   } = useLogin({ onLogin: loginFunction });
 
+  // Refs for input focus management.
   const emailRef = useRef();
   const passwordRef = useRef();
 
+  // Component styles with responsive design.
   const styles = StyleSheet.create({
     AppBody: {
       padding: '2rem',
@@ -51,6 +58,7 @@ const Login = (props) => {
   return (
     <div className={css(styles.AppBody)}>
       <p className={css(styles.AppBodyP)}>Login to access the full dashboard</p>
+
       <form role="form" aria-label="login form" className={css(styles.form)} onSubmit={handleLoginSubmit}>
         <label
           htmlFor="email"
@@ -67,6 +75,7 @@ const Login = (props) => {
           value={email}
           onChange={handleChangeEmail}
         />
+
         <label
           htmlFor="password"
           onClick={() => passwordRef.current && passwordRef.current.focus()}
@@ -83,6 +92,7 @@ const Login = (props) => {
           value={password}
           onChange={handleChangePassword}
         />
+
         <input
           type="submit"
           value="OK"
