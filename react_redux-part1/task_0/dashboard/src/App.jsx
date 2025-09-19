@@ -4,20 +4,20 @@ import axios from 'axios';
 import { StyleSheet, css } from 'aphrodite';
 
 // Utilities.
-import { getLatestNotification } from '../utils/utils';
+import { getLatestNotification } from './utils/utils';
 
 // Reducer / State.
 import { APP_ACTIONS, appReducer, initialState } from './appReducer';
 
 // Components.
-import BodySection from '../BodySection/BodySection';
-import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
-import CourseList from '../CourseList/CourseList';
-import Footer from '../Footer/Footer';
-import Header from '../Header/Header';
-import Login from '../Login/Login';
-import Notifications from '../Notifications/Notifications';
-import WithLogging from '../HOC/WithLogging';
+import BodySection from './components/BodySection/BodySection';
+import BodySectionWithMarginBottom from './components/BodySectionWithMarginBottom/BodySectionWithMarginBottom';
+import CourseList from './pages/CourseList/CourseList';
+import Footer from './components/Footer/Footer';
+import Header from './components/Header/Header';
+import Login from './pages/Login/Login';
+import Notifications from './components/Notifications/Notifications';
+import WithLogging from './components/HOC/WithLogging';
 
 // HOCs with logging.
 const LoginWithLoggingHOC = WithLogging(Login);

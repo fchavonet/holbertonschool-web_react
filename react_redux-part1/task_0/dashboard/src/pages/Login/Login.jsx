@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 // Custom hooks.
-import useLogin from '../hooks/useLogin';
+import useLogin from '../../hooks/useLogin';
 
 const Login = (props) => {
   // Extract login function from props with fallback.

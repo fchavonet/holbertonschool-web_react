@@ -3,10 +3,10 @@ import React, { memo } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 // Components.
-import NotificationItem from './NotificationItem';
+import NotificationItem from '../NotificationItem/NotificationItem';
 
 // Assets.
-import closeButton from "../assets/close-button.png";
+import closeButton from "../../assets/close-icon.png";
 
 const Notifications = memo(({
   notifications = [],

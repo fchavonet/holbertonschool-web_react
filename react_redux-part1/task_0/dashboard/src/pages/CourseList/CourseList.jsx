@@ -2,7 +2,7 @@
 import { StyleSheet, css } from 'aphrodite';
 
 // Components.
-import CourseListRow from './CourseListRow';
+import CourseListRow from './CourseListRow/CourseListRow';
 
 function CourseList({ courses = [] }) {
 

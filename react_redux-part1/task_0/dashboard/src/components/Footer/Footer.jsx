@@ -1,5 +1,5 @@
 // Components.
-import { getCurrentYear, getFooterCopy } from '../utils/utils';
+import { getCurrentYear, getFooterCopy } from '../../utils/utils';
 
 function Footer({ user, logOut }) {
   return (

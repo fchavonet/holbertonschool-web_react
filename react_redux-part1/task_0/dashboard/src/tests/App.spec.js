@@ -7,7 +7,7 @@ import axios from 'axios';
 import { StyleSheetTestUtils } from 'aphrodite';
 
 // Components.
-import App from './App.jsx';
+import App from '../App';
 
 // Mocks axios.
 jest.mock('axios');

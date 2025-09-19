@@ -2,7 +2,7 @@
 import { StyleSheet, css } from 'aphrodite';
 
 // Assets.
-import holbertonLogo from '../assets/holberton-logo.jpg';
+import holbertonLogo from '../../assets/holberton-logo.jpg';
 
 // Styles.
 const styles = StyleSheet.create({

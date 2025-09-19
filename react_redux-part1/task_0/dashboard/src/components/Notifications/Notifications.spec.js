@@ -8,7 +8,7 @@ import { StyleSheetTestUtils } from 'aphrodite';
 import Notifications from './Notifications';
 
 // Utils.
-import { getLatestNotification } from "../utils/utils";
+import { getLatestNotification } from "../../utils/utils";
 
 // Mock data.
 const mockNotifications = [

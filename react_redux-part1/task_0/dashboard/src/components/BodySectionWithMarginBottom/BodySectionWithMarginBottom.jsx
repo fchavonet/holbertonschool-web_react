@@ -1,4 +1,4 @@
-import BodySection from './BodySection';
+import BodySection from '../BodySection/BodySection';
 import { StyleSheet, css } from 'aphrodite';
 
 function BodySectionWithMarginBottom({ title, children }) {
