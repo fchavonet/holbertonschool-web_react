@@ -1,4 +1,4 @@
-import React from 'react';
+// Components.
 import { getCurrentYear, getFooterCopy } from '../utils/utils';
 
 function Footer({ user, logOut }) {

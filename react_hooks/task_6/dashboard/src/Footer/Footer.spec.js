@@ -1,23 +1,29 @@
-import React from 'react';
+// External libraries.
 import { render, screen } from '@testing-library/react';
 import { StyleSheetTestUtils } from 'aphrodite';
+
+// Components.
 import Footer from './Footer';
 
+// Suppress Aphrodite style injection before tests.
 beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterEach(() => {
+// Clear and resume style injection after tests.
+afterAll(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-test('renders correct copyright text', () => {
+/******************
+* COMPONENT TESTS *
+******************/
+
+test('Renders correct copyright text', () => {
   render(<Footer user={{ isLoggedIn: false }} />);
 
   const currentYear = new Date().getFullYear();
-  const footerParagraph = screen.getByText(
-    new RegExp(`copyright ${currentYear}.*holberton school`, 'i')
-  );
+  const footerParagraph = screen.getByText(new RegExp(`copyright ${currentYear}.*holberton school`, 'i'));
 
   expect(footerParagraph).toBeInTheDocument();
 });
