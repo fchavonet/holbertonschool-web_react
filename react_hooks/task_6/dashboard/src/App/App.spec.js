@@ -91,8 +91,8 @@ describe('App Component Tests', () => {
     await user.type(screen.getByLabelText(/password/i), 'strongpass');
     await user.click(screen.getByRole('button', { name: /ok/i }));
 
-    await waitFor(() => screen.getByText('(logout)'));
-    await user.click(screen.getByText('(logout)'));
+    await waitFor(() => screen.getByText('logout'));
+    await user.click(screen.getByText('logout'));
 
     await waitFor(() => screen.getByRole('heading', { name: /log in to continue/i }));
   });

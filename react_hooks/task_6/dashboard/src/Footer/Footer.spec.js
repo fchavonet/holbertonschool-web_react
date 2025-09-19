@@ -21,18 +21,3 @@ test('renders correct copyright text', () => {
 
   expect(footerParagraph).toBeInTheDocument();
 });
-
-test('does NOT display "Contact us" link when user is logged out', () => {
-  render(<Footer user={{ isLoggedIn: false }} />);
-
-  const contactLink = screen.queryByRole('link', { name: /contact us/i });
-  expect(contactLink).not.toBeInTheDocument();
-});
-
-test('displays "Contact us" link when user is logged in', () => {
-  const user = { email: 'user@example.com', isLoggedIn: true };
-  render(<Footer user={user} />);
-
-  const contactLink = screen.getByRole('link', { name: /contact us/i });
-  expect(contactLink).toBeInTheDocument();
-});

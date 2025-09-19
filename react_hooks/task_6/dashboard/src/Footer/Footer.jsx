@@ -8,7 +8,6 @@ function Footer({ user, logOut }) {
       {user.isLoggedIn && (
         <div>
           <p><a href="#" onClick={(e) => { e.preventDefault(); logOut(); }} aria-label="Logout">Logout</a></p>
-          <p><a href="#" onClick={(e) => { e.preventDefault(); logOut(); }} aria-label="Contact us link">Contact us</a></p>
         </div>
       )}
     </footer>

@@ -25,24 +25,6 @@ const CourseListWithLoggingHOC = WithLogging(CourseList);
 
 // Styles.
 const styles = StyleSheet.create({
-  reset: {
-    '*': {
-      boxSizing: 'border-box',
-      margin: 0,
-      padding: 0,
-      scrollBehavior: 'smooth',
-    },
-    '*::before': {
-      boxSizing: 'border-box',
-      margin: 0,
-      padding: 0,
-    },
-    '*::after': {
-      boxSizing: 'border-box',
-      margin: 0,
-      padding: 0,
-    },
-  },
   appContainer: {
     minHeight: '100vh',
     display: 'flex',
