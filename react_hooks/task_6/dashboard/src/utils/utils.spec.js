@@ -1,6 +1,12 @@
+// Utils.
 import { getCurrentYear, getFooterCopy, getLatestNotification } from "./utils";
 
+/******************
+* UTILS FUNCTIONS *
+******************/
+
 describe('Utils functions', () => {
+    // Tests for getCurrentYear function.
     describe('getCurrentYear', () => {
         it('should return the current year', () => {
             const currentYear = new Date().getFullYear();
@@ -8,6 +14,7 @@ describe('Utils functions', () => {
         });
     });
 
+    // Tests for getFooterCopy function.
     describe('getFooterCopy', () => {
         it('Should return "Holberton School" when argument is true', () => {
             expect(getFooterCopy(true)).toBe('Holberton School');
@@ -18,6 +25,7 @@ describe('Utils functions', () => {
         });
     });
 
+    // Tests for getLatestNotification function.
     describe('getLatestNotification', () => {
         it('Should return the correct notification string', () => {
             const expectedString = '<strong>Urgent requirement</strong> - complete by EOD';

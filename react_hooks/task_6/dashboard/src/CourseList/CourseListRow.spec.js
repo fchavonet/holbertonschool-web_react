@@ -7,6 +7,7 @@ import CourseListRow from './CourseListRow';
 /******************
 * COMPONENT TESTS *
 ******************/
+
 describe('CourseListRow Component Tests', () => {
 
   test('Renders single header cell with colspan=2 when textSecondCell is null', () => {
