@@ -1,6 +1,11 @@
+// External libraries.
 import React, { memo } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+
+// Components.
 import NotificationItem from './NotificationItem';
+
+// Assets.
 import closeButton from "../assets/close-button.png";
 
 const Notifications = memo(({
@@ -22,6 +27,7 @@ const Notifications = memo(({
     '100%': { transform: 'translateY(0px)' }
   };
 
+  // Styles.
   const styles = StyleSheet.create({
     notificationContainer: {
       width: '100%',
@@ -93,12 +99,14 @@ const Notifications = memo(({
     }
   });
 
+  // Build drawer content when displayed.
   let drawerContent = null;
 
   if (displayDrawer) {
     let content;
 
     if (notifications.length > 0) {
+      // Generate notification items.
       const items = [];
 
       for (let i = 0; i < notifications.length; i += 1) {
@@ -109,6 +117,7 @@ const Notifications = memo(({
           markAsRead: markNotificationAsRead
         };
 
+        // Render with HTML or text content.
         if (notification.html) {
           items.push(
             <NotificationItem
@@ -135,6 +144,7 @@ const Notifications = memo(({
         </>
       );
     } else {
+      // Empty state.
       content = (
         <div className="Notifications">
           No new notifications for now
@@ -142,6 +152,7 @@ const Notifications = memo(({
       );
     }
 
+    // Complete drawer with close button.
     drawerContent = (
       <div className={`Notifications ${css(styles.notifications)}`}>
         <button
@@ -160,6 +171,7 @@ const Notifications = memo(({
     );
   }
 
+  // Determine title visibility based on drawer state.
   const titleClass = [];
 
   if (displayDrawer) {

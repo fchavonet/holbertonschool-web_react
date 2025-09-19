@@ -1,24 +1,35 @@
+// External libraries.
 import React from 'react';
 import { render, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { StyleSheetTestUtils } from 'aphrodite';
+
+// Components.
 import Notifications from './Notifications';
+
+// Utils.
 import { getLatestNotification } from "../utils/utils";
 
+// Mock data.
 const mockNotifications = [
   { id: 1, type: "default", value: "New course available" },
   { id: 2, type: "urgent", value: "New resume available" },
   { id: 3, type: "urgent", value: getLatestNotification() }
 ];
 
-beforeEach(() => {
+// Suppress Aphrodite style injection before tests.
+beforeAll(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterEach(() => {
+// Clear and resume style injection after tests.
+afterAll(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  cleanup();
 });
+
+/******************
+* COMPONENT TESTS *
+******************/
 
 test('Renders 3 notification items with appropriate text', () => {
   const { getByText, container } = render(
@@ -29,9 +40,11 @@ test('Renders 3 notification items with appropriate text', () => {
     />
   );
 
+  // Verify notification content is displayed.
   expect(getByText('New course available')).toBeInTheDocument();
   expect(getByText('New resume available')).toBeInTheDocument();
 
+  // Verify correct number of notification items.
   const notificationItems = container.querySelectorAll('li');
   expect(notificationItems).toHaveLength(3);
 });
@@ -56,7 +69,10 @@ test('Does not display drawer elements when displayDrawer is false', () => {
     />
   );
 
+  // Title should always be visible.
   expect(getByText('Your notifications')).toBeInTheDocument();
+
+  // Drawer content should not be visible.
   expect(queryByText('Here is the list of notifications')).not.toBeInTheDocument();
   expect(container.querySelectorAll('li')).toHaveLength(0);
   expect(queryByRole('button', { name: /close/i })).not.toBeInTheDocument();
@@ -71,6 +87,7 @@ test('Displays list, paragraph and close button when displayDrawer is true', () 
     />
   );
 
+  // All drawer elements should be visible.
   expect(getByText('Your notifications')).toBeInTheDocument();
   expect(getByText('Here is the list of notifications')).toBeInTheDocument();
   expect(container.querySelectorAll('li')).toHaveLength(3);
@@ -82,11 +99,16 @@ test('Displays "No new notifications for now" when displayDrawer is true and no 
     <Notifications displayDrawer={true} notifications={[]} markNotificationAsRead={() => { }} />
   );
 
+  // Empty state should be displayed.
   expect(getByText('Your notifications')).toBeInTheDocument();
   expect(getByText('No new notifications for now')).toBeInTheDocument();
   expect(queryAllByRole('listitem')).toHaveLength(0);
   expect(getByRole('button', { name: /close/i })).toBeInTheDocument();
 });
+
+/********************
+* INTERACTION TESTS *
+********************/
 
 test('Calls markNotificationAsRead with correct id when clicking on first notification', () => {
   const handler = jest.fn();
@@ -150,8 +172,10 @@ test('Calls handleDisplayDrawer when clicking on the menu item', () => {
       markNotificationAsRead={() => { }}
     />
   );
+
   const menuItem = getByText('Your notifications');
   fireEvent.click(menuItem);
+
   expect(handleDisplayDrawer).toHaveBeenCalledTimes(1);
 });
 
@@ -165,7 +189,9 @@ test('Calls handleHideDrawer when clicking on the close button', () => {
       markNotificationAsRead={() => { }}
     />
   );
+
   const closeBtn = getByRole('button', { name: /close/i });
   fireEvent.click(closeBtn);
+
   expect(handleHideDrawer).toHaveBeenCalledTimes(1);
 });

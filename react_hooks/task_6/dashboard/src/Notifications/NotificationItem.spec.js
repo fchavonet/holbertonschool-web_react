@@ -1,7 +1,11 @@
+// External libraries.
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
+
+// Components.
 import NotificationItem from './NotificationItem';
 
+// Mock getComputedStyle to simulate Aphrodite styles in tests.
 const mockGetComputedStyle = (element) => {
     const type = element.getAttribute('data-notification-type');
     return {
@@ -9,19 +13,26 @@ const mockGetComputedStyle = (element) => {
     };
 };
 
+// Mock window.getComputedStyle for testing styled components.
 Object.defineProperty(window, 'getComputedStyle', {
     value: mockGetComputedStyle,
 });
 
 let consoleSpy;
 
+// Mock console.log to avoid test output pollution.
 beforeEach(() => {
     consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
 });
 
+// Restore console.log after each test.
 afterEach(() => {
     consoleSpy.mockRestore();
 });
+
+/******************
+* COMPONENT TESTS *
+******************/
 
 test('Renders with default type and blue color', () => {
     const { container } = render(
@@ -120,8 +131,8 @@ test('Does not crash when clicked without markAsRead prop', () => {
 
     const li = container.querySelector('li');
 
+    // Should not throw when markAsRead is undefined.
     expect(() => {
         fireEvent.click(li);
     }).not.toThrow();
-
 });
