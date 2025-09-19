@@ -57,7 +57,7 @@ function Header({ user, logOut }) {
           <h1 className={css(styles.AppHeaderH1)}>School Dashboard</h1>
 
           {user.isLoggedIn && (
-            <div className={css(styles.logoutSection)}>
+            <div id="logoutSection" className={css(styles.logoutSection)}>
               Welcome <b>{user.email}</b> (<a href="#" className={css(styles.logoutLink)} onClick={handleLogoutClick}>logout</a>)
             </div>
           )}
