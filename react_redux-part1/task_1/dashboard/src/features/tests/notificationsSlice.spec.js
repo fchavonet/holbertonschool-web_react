@@ -2,24 +2,25 @@ import notificationsReducer, {
   markNotificationAsRead,
   showDrawer,
   hideDrawer,
-  fetchNotifications
+  fetchNotifications,
 } from '../notifications/notificationsSlice';
 import { configureStore } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+jest.mock('axios');
 
 jest.mock('../../utils/utils', () => ({
-  getLatestNotification: jest.fn(() => '<strong>Latest notification content</strong>')
+  getLatestNotification: jest.fn(() => '<strong>Latest notification content</strong>'),
 }));
-
-global.fetch = jest.fn();
 
 describe('notificationsSlice', () => {
   const initialState = {
     notifications: [],
-    displayDrawer: true
+    displayDrawer: true,
   };
 
   beforeEach(() => {
-    fetch.mockClear();
+    jest.clearAllMocks();
   });
 
   it('Should return the initial state', () => {
@@ -31,9 +32,9 @@ describe('notificationsSlice', () => {
       notifications: [
         { id: 1, type: 'default', value: 'Notification 1' },
         { id: 2, type: 'urgent', value: 'Notification 2' },
-        { id: 3, type: 'urgent', value: 'Notification 3' }
+        { id: 3, type: 'urgent', value: 'Notification 3' },
       ],
-      displayDrawer: true
+      displayDrawer: true,
     };
 
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
@@ -41,7 +42,7 @@ describe('notificationsSlice', () => {
     const actual = notificationsReducer(stateWithNotifications, markNotificationAsRead(2));
 
     expect(actual.notifications).toHaveLength(2);
-    expect(actual.notifications.find(n => n.id === 2)).toBeUndefined();
+    expect(actual.notifications.find((n) => n.id === 2)).toBeUndefined();
     expect(consoleSpy).toHaveBeenCalledWith('Marking notification 2 as read');
 
     consoleSpy.mockRestore();
@@ -50,7 +51,7 @@ describe('notificationsSlice', () => {
   it('Should handle showDrawer', () => {
     const stateWithDrawerHidden = {
       notifications: [],
-      displayDrawer: false
+      displayDrawer: false,
     };
 
     const actual = notificationsReducer(stateWithDrawerHidden, showDrawer());
@@ -61,7 +62,7 @@ describe('notificationsSlice', () => {
   it('should handle hideDrawer', () => {
     const stateWithDrawerShown = {
       notifications: [],
-      displayDrawer: true
+      displayDrawer: true,
     };
 
     const actual = notificationsReducer(stateWithDrawerShown, hideDrawer());
@@ -73,17 +74,15 @@ describe('notificationsSlice', () => {
     const mockNotifications = [
       { id: 1, type: 'default', value: 'Notification 1' },
       { id: 2, type: 'urgent', value: 'Notification 2' },
-      { id: 3, type: 'urgent', value: 'Notification 3' }
+      { id: 3, type: 'urgent', value: 'Notification 3' },
     ];
 
-    fetch.mockResolvedValueOnce({
-      json: async () => mockNotifications
+    axios.get.mockResolvedValueOnce({
+      data: { notifications: mockNotifications },
     });
 
     const store = configureStore({
-      reducer: {
-        notifications: notificationsReducer
-      }
+      reducer: { notifications: notificationsReducer },
     });
 
     await store.dispatch(fetchNotifications());
@@ -91,6 +90,6 @@ describe('notificationsSlice', () => {
     const state = store.getState().notifications;
 
     expect(state.notifications).toHaveLength(3);
-    expect(state.notifications[2].html).toBe('<strong>Latest notification content</strong>');
+    expect(state.notifications[2].html.__html).toBe('<strong>Latest notification content</strong>');
   });
 });
