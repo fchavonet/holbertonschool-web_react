@@ -1,5 +1,9 @@
 // External libraries.
 import { StyleSheet, css } from 'aphrodite';
+import { useSelector, useDispatch } from 'react-redux';
+
+// Redux actions
+import { logout } from '../../features/auth/authSlice';
 
 // Assets.
 import holbertonLogo from '../../assets/holberton-logo.jpg';
@@ -41,11 +45,18 @@ const styles = StyleSheet.create({
   },
 });
 
-function Header({ user, logOut }) {
+function Header() {
+  // Get state from Redux store
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user);
+
+  // Get dispatch function
+  const dispatch = useDispatch();
+
   // Handle logout click event.
-  const handleLogoutClick = (e) => {
+  const handleLogout = (e) => {
     e.preventDefault();
-    logOut();
+    dispatch(logout());
   };
 
   return (
@@ -56,9 +67,9 @@ function Header({ user, logOut }) {
         <div className={css(styles.TitleContainer)}>
           <h1 className={css(styles.AppHeaderH1)}>School Dashboard</h1>
 
-          {user.isLoggedIn && (
+          {isLoggedIn && (
             <div id="logoutSection" className={css(styles.logoutSection)}>
-              Welcome <b>{user.email}</b> (<a href="#" className={css(styles.logoutLink)} onClick={handleLogoutClick}>logout</a>)
+              Welcome <b>{user.email}</b> (<a href="#" className={css(styles.logoutLink)} onClick={handleLogout}>logout</a>)
             </div>
           )}
         </div>

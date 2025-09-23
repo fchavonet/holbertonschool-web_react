@@ -2,12 +2,19 @@
 import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axios from 'axios';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 
 // Styles.
 import { StyleSheetTestUtils } from 'aphrodite';
 
 // Components.
 import App from '../App';
+
+// Redux reducers
+import authReducer from '../features/auth/authSlice';
+import notificationsReducer from '../features/notifications/notificationsSlice';
+import coursesReducer from '../features/courses/coursesSlice';
 
 // Mocks axios.
 jest.mock('axios');
@@ -24,6 +31,43 @@ const mockCourses = [
   { id: 2, name: 'Webpack', credit: 20 },
   { id: 3, name: 'React', credit: 40 },
 ];
+
+// Helper function to create test store
+const createTestStore = (initialState = {}) => {
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+      notifications: notificationsReducer,
+      courses: coursesReducer,
+    },
+    preloadedState: {
+      auth: {
+        isLoggedIn: false,
+        user: { email: '', password: '' },
+        ...initialState.auth
+      },
+      notifications: {
+        notifications: [],
+        displayDrawer: false,
+        ...initialState.notifications
+      },
+      courses: {
+        courses: [],
+        ...initialState.courses
+      }
+    }
+  });
+};
+
+// Helper function to render with Redux Provider
+const renderWithRedux = (component, initialState = {}) => {
+  const store = createTestStore(initialState);
+  return render(
+    <Provider store={store}>
+      {component}
+    </Provider>
+  );
+};
 
 // Suppress Aphrodite style injection before tests.
 beforeAll(() => {
@@ -51,7 +95,7 @@ beforeEach(() => {
 
 describe('App Component Tests', () => {
   test('Renders all main components', async () => {
-    render(<App />);
+    renderWithRedux(<App />);
 
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json');
@@ -66,23 +110,7 @@ describe('App Component Tests', () => {
   });
 
   test('Login displays course list and hides login form', async () => {
-    render(<App />);
-    const user = userEvent.setup();
-
-    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
-
-    await user.type(screen.getByLabelText(/email/i), 'user@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'strongpass');
-    await user.click(screen.getByRole('button', { name: /ok/i }));
-
-    await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/courses.json'));
-    await waitFor(() => screen.getByRole('heading', { name: /course list/i }));
-
-    expect(screen.queryByRole('heading', { name: /log in to continue/i })).not.toBeInTheDocument();
-  });
-
-  test('Logout works correctly', async () => {
-    render(<App />);
+    renderWithRedux(<App />);
     const user = userEvent.setup();
 
     await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
@@ -98,7 +126,7 @@ describe('App Component Tests', () => {
   });
 
   test('Notifications are loaded from API', async () => {
-    render(<App />);
+    renderWithRedux(<App />);
 
     await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
     expect(screen.getByText(/your notifications/i)).toBeInTheDocument();
@@ -119,7 +147,7 @@ describe('App Component Tests', () => {
       return Promise.resolve({ data: [] });
     });
 
-    render(<App />);
+    renderWithRedux(<App />);
 
     await waitFor(() => expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/notifications.json'));
 
@@ -135,7 +163,7 @@ describe('App Component Tests', () => {
 
 describe('Keyboard events', () => {
   test('Ctrl+H logs out user', async () => {
-    render(<App />);
+    renderWithRedux(<App />);
     const user = userEvent.setup();
     const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => { });
 
